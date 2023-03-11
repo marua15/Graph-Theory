@@ -25,7 +25,7 @@ class Graph:
         
         while len(queue) > 0 : #répétez cet algorithme jusqu'a notre queue soit vide
             s = queue.pop(0)  #pop() : enlève et renvoie le premier élément de la liste (0 : indice du 1er elt)
-            
+            print(s)
             for node in self.graph[s] :
                 # cette boucle explore les noeuds adjacents, si un noeud adjacent
                 # n'a pas été encore visité,il est ajouté à queue et leur "visited" valeur est fixé à 'True'
