@@ -11,16 +11,16 @@ def create_matrix():
         rows = int(first_no.get())
         cols = int(second_no.get())
     except ValueError:
-        error_label.config(text="Entrez deux valeurs entiers")
+        error_label.configure(text="Entrez deux valeurs entieres")
         return
 
-    # Create the matrix input fields
+    # create ixj matrix of input fields
     matrix = []
     for i in range(rows):
         row = []
         for j in range(cols):
             entry = ctk.CTkEntry(window, width=5)
-            entry.grid(row=i+3, column=j)
+            entry.grid(row=i+3, column=j, padx=i+3, pady=j)
             row.append(entry)
         matrix.append(row)
 
@@ -39,6 +39,9 @@ def create_matrix():
             G = nx.Graph()
         else:
             G = nx.DiGraph()
+        
+        # current_value = types.get()
+        # if graphtype_combobox.
 
         for i in range(rows):
             G.add_node(i)
@@ -62,7 +65,7 @@ def create_matrix():
             canvas.draw()
             canvas.get_tk_widget().grid(row=3 + rows + 1, column=0, columnspan=cols+1, pady=10)
         else:
-            error_label.config(text="Entrez au moins une node dans la matrice")
+            error_label.configure(text="Entrez au moins une node dans la matrice")
 
         # Set the clicked flag to True
         submit_button.clicked = True
@@ -78,15 +81,19 @@ def create_matrix():
         BFS_button.clicked = False
 
     submit_button.clicked = True
-    submit_button.config(command=submit_matrix)
+    submit_button.configure(command=submit_matrix)
 
-    directed_button = ctk.CTkButton(window, text="Directed", command=lambda: setattr(directed_button, "clicked", True))
+    directed_button = ctk.CTkRadioButton(window, text="Directed", command=lambda: setattr(directed_button, "clicked", True))
     directed_button.grid(row=2, column=3, padx=10)
     directed_button.clicked = False
 
-    undirected_button = ctk.CTkButton(window, text="Undirected", command=lambda: setattr(undirected_button, "clicked", True))
+    undirected_button = ctk.CTkRadioButton(window, text="Undirected", command=lambda: setattr(undirected_button, "clicked", True))
     undirected_button.grid(row=2, column=4, padx=10)
     undirected_button.clicked = False
+
+    graphtype_combobox = ctk.CTkComboBox(window, values= ["Circular", "Shell", "Spectral", "Random", "Spring", "Planar"], command=lambda: setattr(graphtype_combobox, "clicked", True))
+    graphtype_combobox.grid(row=2, column=5, padx=10)
+    graphtype_combobox.clicked = False
 
     # Wait for the user to fill in the matrix
     submit_button.wait_variable(submit_button.clicked)
