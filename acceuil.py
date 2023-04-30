@@ -3,6 +3,14 @@ import customtkinter as ctk
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+# from bfs import BFS
+import bfs
+# from dfs import DFS
+# from Warshall import floyd_warshall
+# from Prims import primMST
+# from Kruskal import kruskalMST
+# from Dijkstra import dijkstra
+# from BellmanFord import BellmanFord
 
 
 def create_matrix():
@@ -40,19 +48,19 @@ def create_matrix():
         else:
             G = nx.DiGraph()
         
-        selected_value = graphtype_combobox.get()
-        if graphtype_combobox.get()=="Circular":
-            nx.draw_circular(G, with_labels=True)
-        if graphtype_combobox.get()=="Shell":
-            nx.draw_shell(G, with_labels=True)
-        if graphtype_combobox.get()=="Spectral":
-            nx.draw_spectral(G, with_labels=True)
-        if graphtype_combobox.get()=="Random":
-            nx.draw_random(G, with_labels=True)
-        if graphtype_combobox.get()=="Spring":
-            nx.draw_spring(G, with_labels=True)
-        if graphtype_combobox.get()=="Planar":
-            nx.draw_planar(G, with_labels=True)
+        # selected_value = graphtype_combobox.get()
+        # if selected_value=="Circular":
+        #     nx.draw_circular(G)
+        # if selected_value=="Shell":
+        #     nx.draw_shell(G)
+        # if selected_value=="Spectral":
+        #     nx.draw_spectral(G)
+        # if selected_value=="Random":
+        #     nx.draw_random(G)
+        # if selected_value=="Spring":
+        #     nx.draw_spring(G)
+        # if selected_value=="Planar":
+        #     nx.draw_planar(G)
 
         for i in range(rows):
             G.add_node(i)
@@ -82,12 +90,13 @@ def create_matrix():
         submit_button.clicked = True
 
         # Define the function to call when the BFS button is clicked
-        # def run_bfs():
-        #     answer = BFS.findDistance(rows, cols, G)
-        #     print(answer)
+        def run_bfs():
+            answer = bfs.BFS.findDistance(rows, cols, G)
+            print(answer)
 
         # Create the BFS button
-        BFS_button = ctk.CTkButton(window, text="BFS")
+
+        BFS_button = ctk.CTkButton(window, text="BFS", command=run_bfs)
         BFS_button.grid(row=10, column=cols//2, pady=10)
         BFS_button.clicked = False
 
@@ -102,7 +111,7 @@ def create_matrix():
     undirected_button.grid(row=2, column=4, padx=10)
     undirected_button.clicked = False
 
-    graphtype_combobox = ctk.CTkComboBox(window, values= ["Circular", "Shell", "Spectral", "Random", "Spring", "Planar"], command=lambda: setattr(graphtype_combobox, "clicked", True))
+    graphtype_combobox = ctk.CTkComboBox(window, values= ["Circular", "Shell", "Spectral", "Random", "Spring", "Planar"])
     graphtype_combobox.grid(row=2, column=5, padx=10)
     graphtype_combobox.clicked = False
 
