@@ -40,8 +40,19 @@ def create_matrix():
         else:
             G = nx.DiGraph()
         
-        # current_value = types.get()
-        # if graphtype_combobox.
+        selected_value = graphtype_combobox.get()
+        if graphtype_combobox.get()=="Circular":
+            nx.draw_circular(G, with_labels=True)
+        if graphtype_combobox.get()=="Shell":
+            nx.draw_shell(G, with_labels=True)
+        if graphtype_combobox.get()=="Spectral":
+            nx.draw_spectral(G, with_labels=True)
+        if graphtype_combobox.get()=="Random":
+            nx.draw_random(G, with_labels=True)
+        if graphtype_combobox.get()=="Spring":
+            nx.draw_spring(G, with_labels=True)
+        if graphtype_combobox.get()=="Planar":
+            nx.draw_planar(G, with_labels=True)
 
         for i in range(rows):
             G.add_node(i)
