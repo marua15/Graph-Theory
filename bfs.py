@@ -1,54 +1,66 @@
+# Python3 implementation of the approach
 class Graph:
+	
+	adj = []
 
-    # cette méthode s'agit d'un constructeur qui est vide 
-    def __init__(self) :
-        self.graph={}
-    # The def keyword is used to create, (or define) a function.
-    def addEdge(self, u, v):
-        # we created an array, append: Adds an element at the end of the list
-        if u not in self.graph:
-            # creer u et lui affecte v
-            self.graph[u]=[v] 
+	# Function to fill empty adjacency matrix
+	def __init__(self, v, e):
+		
+		self.v = v
+		self.e = e
+		Graph.adj = [[0 for i in range(v)]
+						for j in range(v)]
 
-        else:
-            # si u est deja cree pas besoin de le creer de nouveau et il suffit d'ajouter v a la liste
-            self.graph[u].append(v)
+	# Function to add an edge to the graph
+	def addEdge(self, start, e):
+		
+		# Considering a bidirectional edge
+		Graph.adj[start][e] = 1
+		Graph.adj[e][start] = 1
 
-    def BFS(self,s): #s est le sommet du départ
-        queue = [s] #on ajoute le sommet du départ
-        visited = [False]*len(self.graph)
-        # visited : un tableau qui permet de grader des noeuds qui ont été déjà visité
-        # False : veut dire qu'aucun noeud n'a été visité 
-        # len(self.graph) : retourne le nbre de noeuds qui existent dans notre graphe
-        visited[s] = True
-        # veut dire que le sommet de départ à été visité
-        
-        while len(queue) > 0 : #répétez cet algorithme jusqu'a notre queue soit vide
-            s = queue.pop(0)  #pop() : enlève et renvoie le premier élément de la liste (0 : indice du 1er elt)
-            print(s)
-            for node in self.graph[s] :
-                # cette boucle explore les noeuds adjacents, si un noeud adjacent
-                # n'a pas été encore visité,il est ajouté à queue et leur "visited" valeur est fixé à 'True'
-                if visited[node] == False :
-                    queue.append(node)
-                    visited[node] = True
+	# Function to perform DFS on the graph
+	def BFS(self, start):
+		
+		# Visited vector to so that a
+		# vertex is not visited more than
+		# once Initializing the vector to
+		# false as no vertex is visited at
+		# the beginning
+		visited = [False] * self.v
+		q = [start]
 
-g=Graph()
-g.addEdge(0,1)
-g.addEdge(0,2)
-g.addEdge(0,3)
-g.addEdge(1,4)
-g.addEdge(2,3)
-g.addEdge(3,4)
-g.addEdge(3,5)
-g.addEdge(4,0)
-g.addEdge(5,2)
-g.BFS(0)
+		# Set source as visited
+		visited[start] = True
 
+		while q:
+			vis = q[0]
 
+			# Print current node
+			print(vis, end = ' ')
+			q.pop(0)
+			
+			# For every adjacent vertex to
+			# the current vertex
+			for i in range(self.v):
+				if (Graph.adj[vis][i] == 1 and
+					(not visited[i])):
+						
+					# Push the adjacent node
+					# in the queue
+					q.append(i)
+					
+					# set
+					visited[i] = True
 
+# Driver code
+v, e = 5, 4
 
+# Create the graph
+G = Graph(v, e)
+G.addEdge(0, 1)
+G.addEdge(0, 2)
+G.addEdge(1, 3)
 
-
-
+# Perform BFS
+G.BFS(0)
 

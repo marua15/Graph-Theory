@@ -109,7 +109,7 @@ entry2.grid(row=1, column=1)
 mybutton = ctk.CTkButton(window, text="Submit", command=create_matrix)
 mybutton.grid(row=2, column=1)
 
-error_label = ctk.CTkLabel(window, fg_color="red")
+error_label = ctk.CTkLabel(window)
 error_label.grid(row=3, column=1)
 
 window.mainloop()
