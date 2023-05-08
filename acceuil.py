@@ -4,7 +4,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 # from bfs import BFS
-import bfs
+# import bfs
 # from dfs import DFS
 # from Warshall import floyd_warshall
 # from Prims import primMST
@@ -48,20 +48,6 @@ def create_matrix():
         else:
             G = nx.DiGraph()
         
-        # selected_value = graphtype_combobox.get()
-        # if selected_value=="Circular":
-        #     nx.draw_circular(G)
-        # if selected_value=="Shell":
-        #     nx.draw_shell(G)
-        # if selected_value=="Spectral":
-        #     nx.draw_spectral(G)
-        # if selected_value=="Random":
-        #     nx.draw_random(G)
-        # if selected_value=="Spring":
-        #     nx.draw_spring(G)
-        # if selected_value=="Planar":
-        #     nx.draw_planar(G)
-
         for i in range(rows):
             G.add_node(i)
         for i in range(rows):
@@ -90,13 +76,13 @@ def create_matrix():
         submit_button.clicked = True
 
         # Define the function to call when the BFS button is clicked
-        def run_bfs():
-            answer = bfs.BFS.findDistance(rows, cols, G)
-            print(answer)
+        # def run_bfs():
+        #     answer = bfs.BFS.findDistance(rows, cols, G)
+        #     print(answer)
 
         # Create the BFS button
 
-        BFS_button = ctk.CTkButton(window, text="BFS", command=run_bfs)
+        BFS_button = ctk.CTkButton(window, text="BFS")
         BFS_button.grid(row=10, column=cols//2, pady=10)
         BFS_button.clicked = False
 
@@ -110,10 +96,6 @@ def create_matrix():
     undirected_button = ctk.CTkRadioButton(window, text="Undirected", command=lambda: setattr(undirected_button, "clicked", True))
     undirected_button.grid(row=2, column=4, padx=10)
     undirected_button.clicked = False
-
-    graphtype_combobox = ctk.CTkComboBox(window, values= ["Circular", "Shell", "Spectral", "Random", "Spring", "Planar"])
-    graphtype_combobox.grid(row=2, column=5, padx=10)
-    graphtype_combobox.clicked = False
 
     # Wait for the user to fill in the matrix
     submit_button.wait_variable(submit_button.clicked)

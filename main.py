@@ -36,7 +36,7 @@ G.add_edges_from(edgelist)
 # G.add_node("C")
 # G.ads_node(print)
 
-nx.draw_spring(G, with_labels=True)
+nx.draw_cirlcular(G, with_labels=True)
 plt.show()
 
 # nx.draw_circular(G, with_labels=True)
@@ -51,8 +51,8 @@ plt.show()
 # nx.draw_random(G, with_labels=True)
 # plt.show()
 
-nx.draw_planar(G, with_labels=True)
-plt.show()
+# nx.draw_planar(G, with_labels=True)
+# plt.show()
 
 #Degree of nodes
 print(dict(G.degree))
