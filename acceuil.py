@@ -1,8 +1,9 @@
-from tkinter import *
+import tkinter as tk
 import customtkinter as ctk
 import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+
 # from bfs import BFS
 # import bfs
 # from dfs import DFS
@@ -21,7 +22,8 @@ def create_matrix():
     except ValueError:
         error_label.configure(text="Entrez deux valeurs entieres")
         return
-
+    # matrix_frame = tk.Frame(window, width=200, height=200, bd=1, relief=tk.SOLID, bg='#CCE5FF')
+    # matrix_frame.grid(row=1, column=0, padx=10, pady=10)
     # create ixj matrix of input fields
     matrix = []
     for i in range(rows):
@@ -107,8 +109,8 @@ window.geometry("800x600")
 rows_label=ctk.CTkLabel(window, text="Nombre de lignes: ").grid(row=0, column=0)
 cols_label=ctk.CTkLabel(window, text="Nombre de colonnes:").grid(row=1, column=0)
 
-first_no = StringVar()
-second_no = StringVar()
+first_no = tk.StringVar()
+second_no = tk.StringVar()
 
 entry1 = ctk.CTkEntry(window, textvariable=first_no)
 entry1.grid(row=0, column=1)
@@ -122,3 +124,5 @@ error_label = ctk.CTkLabel(window)
 error_label.grid(row=3, column=1)
 
 window.mainloop()
+
+# how to draw a matrix in tkinter and networkx ?
