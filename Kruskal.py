@@ -1,68 +1,43 @@
-# Python implementation for Kruskal's
-# algorithm
+def find(parent, i):
+    if parent[i] == i:
+        return i
+    return find(parent, parent[i])
 
-# Find set of vertex i
-def find(i):
-	while parent[i] != i:
-		i = parent[i]
-	return i
+def union(parent, rank, x, y):
+    xroot = find(parent, x)
+    yroot = find(parent, y)
 
-# Does union of i and j. It returns
-# false if i and j are already in same
-# set.
-def union(i, j):
-	a = find(i)
-	b = find(j)
-	parent[a] = b
+    if rank[xroot] < rank[yroot]:
+        parent[xroot] = yroot
+    elif rank[xroot] > rank[yroot]:
+        parent[yroot] = xroot
+    else:
+        parent[yroot] = xroot
+        rank[xroot] += 1
 
-# Finds MST using Kruskal's algorithm
-def kruskalMST(cost):
-	mincost = 0 # Cost of min MST
+def kruskal_mst(graph):
+    n = len(graph)
+    parent = [i for i in range(n)]
+    rank = [0 for i in range(n)]
+    result = []
 
-	# Initialize sets of disjoint sets
-	for i in range(V):
-		parent[i] = i
+    i = 0
+    edges = []
+    for u in range(n):
+        for v in range(u+1, n):
+            if graph[u][v] != 0:
+                edges.append((graph[u][v], u, v))
 
-	# Include minimum weight edges one by one
-	edge_count = 0
-	while edge_count < V - 1:
-		min = INF
-		a = -1
-		b = -1
-		for i in range(V):
-			for j in range(V):
-				if find(i) != find(j) and cost[i][j] < min:
-					min = cost[i][j]
-					a = i
-					b = j
-		union(a, b)
-		print('Edge {}:({}, {}) cost:{}'.format(edge_count, a, b, min))
-		edge_count += 1
-		mincost += min
+    edges = sorted(edges)
 
-	print("Minimum cost= {}".format(mincost))
+    while i < n-1:
+        weight, u, v = edges[i]
+        i = i + 1
+        x = find(parent, u)
+        y = find(parent, v)
 
+        if x != y:
+            result.append((u, v, weight))
+            union(parent, rank, x, y)
 
-# Driver code
-# Let us create the following graph
-#		 2 3
-#	 (0)--(1)--(2)
-#	 | / \ |
-#	 6| 8/ \5 |7
-#	 | /	 \ |
-#	 (3)-------(4)
-#		 9
-
-V = 5
-parent = [i for i in range(V)]
-INF = float('inf')
-cost = [[INF, 2, INF, 6, INF],
-		[2, INF, 3, 8, 5],
-		[INF, 3, INF, INF, 7],
-		[6, 8, INF, INF, 9],
-		[INF, 5, 7, 9, INF]]
-
-# Print the solution
-kruskalMST(cost)
-
-# This code is contributed by ng24_7
+    return result

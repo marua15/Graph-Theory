@@ -1,46 +1,18 @@
-# Floyd Warshall Algorithm in python
+INF = float('inf')
 
-
-# The number of vertices
-nV = 4
-
-INF = 999
-
-
-# Algorithm implementation
-def floyd_warshall(G):
-    distance = list(map(lambda i: list(map(lambda j: j, i)), G))
-                   
-            # these two expressions are equivalent
-
-      # Initialize distance with the values of graph
-    # for i in range(nV):
-    #     for j in range(nV):
-    #         distance[i][j] = G[i][j]
-
-
-    # Adding vertices individually
-    for k in range(nV):
-        for i in range(nV):
-            for j in range(nV):
-                distance[i][j] = min(distance[i][j], distance[i][k] + distance[k][j])
-    print_solution(distance)
-
-
-# Printing the solution
-def print_solution(distance):
-    for i in range(nV):
-        for j in range(nV):
-            if(distance[i][j] == INF):
-                print("INF", end=" ")
-            else:
-                print(distance[i][j], end="  ")
-        print(" ")
-
-
-G = [[0, 3, INF, 5],
-         [2, 0, INF, 4],
-         [INF, 1, 0, INF],
-         [INF, INF, 2, 0]]
-floyd_warshall(G)
-
+def floyd_warshall(graph):
+    num_vertices = len(graph)
+    
+    # initialize distance matrix and path matrix
+    dist = [[0 if i == j else graph[i][j] if graph[i][j] != 0 else INF for j in range(num_vertices)] for i in range(num_vertices)]
+    path = [[-1 if i == j or graph[i][j] == 0 else i for j in range(num_vertices)] for i in range(num_vertices)]
+    
+    # apply the algorithm
+    for k in range(num_vertices):
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                if dist[i][k] + dist[k][j] < dist[i][j]:
+                    dist[i][j] = dist[i][k] + dist[k][j]
+                    path[i][j] = path[k][j]
+    
+    return dist, path
