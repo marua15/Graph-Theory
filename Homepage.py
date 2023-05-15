@@ -3,43 +3,31 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
-import adjacencyMatrix.BellmanFordM as BellmanFordM
-import adjacencyMatrix.bfsM as bfsM 
-import adjacencyMatrix.dfsM as dfsM
-from dictionary.PrimsD import prim
+
+# dictionary algorithms 
+from dictionary.bfsD import bfs
+from dictionary.dfsD import dfs
+from dictionary.DijikstraD import dijkstra
 from dictionary.KruskalD import kruskal
-import adjacencyMatrix.WarshallM as WarshallM
-import adjacencyMatrix.DijkstraM as DijkstraM
+from dictionary.PrimsD import prim
+from dictionary.WarshallD import warshall
+from adjacencyMatrix.BellmanFordM import bellman_ford
 
-
-# display algorithms 
-
-def display_algorithms(G):
-        # Create a tkinter window
-        window_algo = tk.Tk()
-        
-        bfs_rdbutton = tk.Radiobutton(window_algo, text="BFS", command=lambda:bfsM(G,0))
-        bfs_rdbutton.pack()
-        dfs_rdbutton = tk.Radiobutton(window_algo, text="DFS", command=lambda:dfsM(G,0))
-        dfs_rdbutton.pack()
-        Prims_rdbutton = tk.Radiobutton(window_algo, text="Prims", command=lambda:prim(G))
-        Prims_rdbutton.pack()
-        Kruskal_rdbutton = tk.Radiobutton(window_algo, text="Kruskal", command=lambda:kruskal(G,0))
-        Kruskal_rdbutton.pack()
-        Warshall_rdbutton = tk.Radiobutton(window_algo, text="Warshall", command=lambda:WarshallM(G,0))
-        Warshall_rdbutton.pack()
-        Dijkstra_rdbutton = tk.Radiobutton(window_algo, text="Dijkstra", command=lambda:DijkstraM(G,0))
-        Dijkstra_rdbutton.pack()
-      
-        window_algo.mainloop()
-        
-
+# adjacency matrix algorithms
+from adjacencyMatrix.BellmanFordM import bellman_ford
+from adjacencyMatrix.bfsM import bfs
+from adjacencyMatrix.dfsM import dfs
+from adjacencyMatrix.DijkstraM import dijkstra
+from adjacencyMatrix.Kruskal import kruskal
+from adjacencyMatrix.PrimsM import prim
+from adjacencyMatrix.WarshallM import floyd_warshall
 
 
 # display the characteristics of the graph
 def display_graph_characteristics(G):
         # Create a tkinter window
         window = tk.Tk()
+        window.geometry("500x500")
 
         # Calculate and display the number of nodes and edges in the graph
         num_nodes = G.number_of_nodes()
@@ -116,18 +104,79 @@ def create_matrix():
         button_characteristics.grid(row=11, column=0, columnspan=3, pady=10)
 
 
+    def getalgos():
+        window_algo= tk.Tk()
+
+        def display_dijkstra_result(graph):
+            start_node = int(entry_start_node.get())
+            result = dijkstra(graph.adjacency(), start_node)
+
+            dijkstra_result_label = tk.Label(window_algo, text="Dijkstra Result:")
+            dijkstra_result_label.grid(row=1, column=0, pady=10)
+
+            dijkstra_result_text = tk.Text(window, height=1, width=30)
+            dijkstra_result_text.insert(tk.END, result)
+            dijkstra_result_text.grid(row=1, column=1, pady=10)
+
+        def display_bfs_result(graph):
+            start_node = int(entry_start_node.get())
+            result = bfs(graph.adjacency(), start_node)
+
+            bfs_result_label = tk.Label(window_algo, text="BFS Result:")
+            bfs_result_label.grid(row=2, column=0, pady=10)
+
+            bfs_result_text = tk.Text(window_algo, height=1, width=30)
+            bfs_result_text.insert(tk.END, result)
+            bfs_result_text.grid(row=2, column=1, pady=10)
+
+        def display_dfs_result(graph):
+            start_node = int(entry_start_node.get())
+            result = dfs(graph.adjacency(), start_node)
+
+            dfs_result_label = tk.Label(window_algo, text="DFS Result:")
+            dfs_result_label.grid(row=3, column=0, pady=10)
+
+            dfs_result_text = tk.Text(window_algo, height=1, width=30)
+            dfs_result_text.insert(tk.END, result)
+            dfs_result_text.grid(row=3, column=1, pady=10)
+            
+            # Display BFS result
+        bfs_button = tk.Button(window_algo, text="BFS", command=lambda: display_bfs_result(G))
+        bfs_button.grid(row=13, column=0, pady=10)
+
+            # Display DFS result
+        dfs_button = tk.Button(window_algo, text="DFS", command=lambda: display_dfs_result(G))
+        dfs_button.grid(row=14, column=0, pady=10)
+
+            # Display Dijkstra's result
+        dijkstra_button = tk.Button(window_algo, text="Dijkstra", command=lambda: display_dijkstra_result(G))
+        dijkstra_button.grid(row=15, column=0, pady=10)
+
+        window_algo.mainloop()
+  
+
+        
+
     # Create the Tkinter window
     window = tk.Tk()
     window.title("Weighted Graph Matrix")
     window.geometry("800x600")
 
-    # Create the text entry widget
+   # Create the text entry widget
     entry = tk.Text(window, height=10, width=30)
-    entry.grid()
+    entry.grid(row=0, column=0, columnspan=3, padx=10, pady=10)
 
-    # Create the button to create the graph
+     # Create the button to create the graph
     button = tk.Button(window, text="Create Graph", command=create_graph)
-    button.grid()
+    button.grid(row=5,column=2)
+
+    # Create the label for the start node input
+    label_start_node = tk.Label(window, text="Start Node:")
+    label_start_node.grid(row=1, column=0, padx=10, pady=5)
+
+    # Create the entry widget for the start node input
+    entry_start_node = tk.Entry(window, width=10)
+    entry_start_node.grid(row=1, column=1, padx=10, pady=5)
 
     directed_button = tk.Button(window, text="Directed", command=lambda: setattr(directed_button, "clicked", True))
     directed_button.grid(row=4, column=3, padx=10)
@@ -136,6 +185,10 @@ def create_matrix():
     undirected_button = tk.Button(window, text="Undirected", command=lambda: setattr(undirected_button, "clicked", True))
     undirected_button.grid(row=4, column=4, padx=10)
     undirected_button.clicked = False
+
+    button_algo = tk.Button(window,text="Algorithmes",command=getalgos)
+    button_algo.grid(row=4, column=5, padx=10)
+
 
     # Start the Tkinter event loop
     window.mainloop()
@@ -199,10 +252,6 @@ def create_dictionary():
             button_characteristics = tk.Button(root, text="Get Characteristics", command=lambda: display_graph_characteristics(G))
             button_characteristics.grid(row=5, column=0)
 
-            # create a button to choose the algorithms 
-            button_algorithms = tk.Button(root, text="Choose Algorithms", command=lambda: display_algorithms(G))
-            button_algorithms.grid(row=6, column=0)
-
         # Create a tkinter window
         root = tk.Tk()
         root.geometry("800x600")
@@ -243,13 +292,6 @@ def create_dictionary():
 
         # Start the tkinter event loop
         root.mainloop()
-
-
-
-
-        
-
-
 
 # create the window image
 window_img = tk.Tk()

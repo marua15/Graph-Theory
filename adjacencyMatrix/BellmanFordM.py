@@ -1,60 +1,39 @@
-# Python3 program for Bellman-Ford's
-# single source shortest path algorithm.
-from sys import maxsize
+import sys
 
-# The main function that finds shortest
-# distances from src to all other vertices
-# using Bellman-Ford algorithm. The function
-# also detects negative weight cycle
-# The row graph[i] represents i-th edge with
-# three values u, v and w.
-def BellmanFord(graph, V, E, src):
+def bellman_ford(adj_matrix, start):
+    num_vertices = len(adj_matrix)
+    distance = [sys.maxsize] * num_vertices
+    distance[start] = 0
 
-	# Initialize distance of all vertices as infinite.
-	dis = [maxsize] * V
+    # Relax edges repeatedly
+    for _ in range(num_vertices - 1):
+        for u in range(num_vertices):
+            for v in range(num_vertices):
+                weight = adj_matrix[u][v]
+                if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                    distance[v] = distance[u] + weight
 
-	# initialize distance of source as 0
-	dis[src] = 0
+    # Check for negative cycles
+    for u in range(num_vertices):
+        for v in range(num_vertices):
+            weight = adj_matrix[u][v]
+            if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                raise ValueError("Graph contains a negative-weight cycle")
 
-	# Relax all edges |V| - 1 times. A simple
-	# shortest path from src to any other
-	# vertex can have at-most |V| - 1 edges
-	for i in range(V - 1):
-		for j in range(E):
-			if dis[graph[j][0]] + \
-				graph[j][2] < dis[graph[j][1]]:
-				dis[graph[j][1]] = dis[graph[j][0]] + \
-									graph[j][2]
+    return distance
 
-	# check for negative-weight cycles.
-	# The above step guarantees shortest
-	# distances if graph doesn't contain
-	# negative weight cycle. If we get a
-	# shorter path, then there is a cycle.
-	for i in range(E):
-		x = graph[i][0]
-		y = graph[i][1]
-		weight = graph[i][2]
-		if dis[x] != maxsize and dis[x] + \
-						weight < dis[y]:
-			print("Graph contains negative weight cycle")
+# # Example usage
+# adjacency_matrix = [
+#     [0, -1, 4, 0, 0],
+#     [0, 0, 3, 2, 2],
+#     [0, 0, 0, 0, 0],
+#     [0, 1, 0, 0, 5],
+#     [0, 0, 0, -3, 0],
+# ]
 
-	print("Vertex Distance from Source")
-	for i in range(V):
-		print("%d\t\t%d" % (i, dis[i]))
+# start_vertex = 0
+# distances = bellman_ford(adjacency_matrix, start_vertex)
 
-# Driver Code
-if __name__ == "__main__":
-	V = 5 # Number of vertices in graph
-	E = 8 # Number of edges in graph
-
-	# Every edge has three values (u, v, w) where
-	# the edge is from vertex u to v. And weight
-	# of the edge is w.
-	graph = [[0, 1, -1], [0, 2, 4], [1, 2, 3],
-			[1, 3, 2], [1, 4, 2], [3, 2, 5],
-			[3, 1, 1], [4, 3, -3]]
-	BellmanFord(graph, V, E, 0)
-
-# This code is contributed by
-# sanjeev2552
+# # Print the distances from the start vertex to all other vertices
+# for i, distance in enumerate(distances):
+#     print(f"Distance from vertex {start_vertex} to vertex {i} is {distance}")
