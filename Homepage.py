@@ -5,22 +5,353 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
 
 # dictionary algorithms 
-from dictionary.bfsD import bfs
-from dictionary.dfsD import dfs
-from dictionary.DijikstraD import dijkstra
-from dictionary.KruskalD import kruskal
-from dictionary.PrimsD import prim
-from dictionary.WarshallD import warshall
-from adjacencyMatrix.BellmanFordM import bellman_ford
+import sys
+
+def bellman_fordD(graph, start):
+    num_vertices = len(graph)
+    distance = {v: sys.maxsize for v in graph}
+    distance[start] = 0
+
+    # Relax edges repeatedly
+    for _ in range(num_vertices - 1):
+        for u in graph:
+            for v in graph[u]:
+                weight = graph[u][v]
+                if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                    distance[v] = distance[u] + weight
+
+    # Check for negative cycles
+    for u in graph:
+        for v in graph[u]:
+            weight = graph[u][v]
+            if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                raise ValueError("Graph contains a negative-weight cycle")
+
+    return distance
+
+
+import heapq
+
+def primD(graph):
+    # Select a random starting vertex
+    start_vertex = next(iter(graph))
+    visited = set([start_vertex])
+    minimum_spanning_tree = []
+    edges = [
+        (cost, start_vertex, next_vertex)
+        for next_vertex, cost in graph[start_vertex].items()
+    ]
+    heapq.heapify(edges)
+
+    while edges:
+        cost, current_vertex, next_vertex = heapq.heappop(edges)
+        if next_vertex not in visited:
+            visited.add(next_vertex)
+            minimum_spanning_tree.append((current_vertex, next_vertex, cost))
+
+            for neighbor, edge_cost in graph[next_vertex].items():
+                if neighbor not in visited:
+                    heapq.heappush(edges, (edge_cost, next_vertex, neighbor))
+
+    return minimum_spanning_tree
+
+# kruskal
+class DisjointSet:
+    def __init__(self, vertices):
+        self.parent = {v: v for v in vertices}
+        self.rank = {v: 0 for v in vertices}
+
+    def find(self, vertex):
+        if self.parent[vertex] != vertex:
+            self.parent[vertex] = self.find(self.parent[vertex])
+        return self.parent[vertex]
+
+    def union(self, vertex1, vertex2):
+        root1 = self.find(vertex1)
+        root2 = self.find(vertex2)
+        if root1 != root2:
+            if self.rank[root1] < self.rank[root2]:
+                self.parent[root1] = root2
+            elif self.rank[root1] > self.rank[root2]:
+                self.parent[root2] = root1
+            else:
+                self.parent[root2] = root1
+                self.rank[root1] += 1
+
+
+def kruskalD(graph):
+    vertices = set(graph.keys())
+    disjoint_set = DisjointSet(vertices)
+    minimum_spanning_tree = []
+    edges = []
+
+    # Collect all edges in a list
+    for vertex, neighbors in graph.items():
+        for neighbor, weight in neighbors.items():
+            edges.append((weight, vertex, neighbor))
+
+    # Sort the edges in ascending order of weight
+    edges.sort()
+
+    for edge in edges:
+        weight, vertex1, vertex2 = edge
+        if disjoint_set.find(vertex1) != disjoint_set.find(vertex2):
+            disjoint_set.union(vertex1, vertex2)
+            minimum_spanning_tree.append((vertex1, vertex2, weight))
+
+    return minimum_spanning_tree
+
+
+
+import heapq
+
+def dijkstraD(graph, start):
+    distances = {node: float('inf') for node in graph}
+    distances[start] = 0
+    queue = [(0, start)]
+    
+    while queue:
+        current_distance, current_node = heapq.heappop(queue)
+        
+        if current_distance > distances[current_node]:
+            continue
+        
+        for neighbor, weight in graph[current_node].items():
+            distance = current_distance + weight
+            
+            if distance < distances[neighbor]:
+                distances[neighbor] = distance
+                heapq.heappush(queue, (distance, neighbor))
+    
+    return distances
+
+
+from collections import deque
+
+def bfsD(graph, start):
+    visited = set()
+    queue = deque([start])
+    
+    while queue:
+        node = queue.popleft()
+        if node not in visited:
+            print(node, end=' ')
+            visited.add(node)
+            neighbors = graph.get(node, [])
+            queue.extend(neighbors)
+
+
+def dfsD(graph, start, visited=None):
+    if visited is None:
+        visited = set()
+    
+    visited.add(start)
+    print(start)
+    
+    for neighbor in graph[start]:
+        if neighbor not in visited:
+            dfsD(graph, neighbor, visited)
+
 
 # adjacency matrix algorithms
-from adjacencyMatrix.BellmanFordM import bellman_ford
-from adjacencyMatrix.bfsM import bfs
-from adjacencyMatrix.dfsM import dfs
-from adjacencyMatrix.DijkstraM import dijkstra
-from adjacencyMatrix.Kruskal import kruskal
-from adjacencyMatrix.PrimsM import prim
-from adjacencyMatrix.WarshallM import floyd_warshall
+import sys
+
+def bellman_fordM(adj_matrix, start):
+    num_vertices = len(adj_matrix)
+    distance = [sys.maxsize] * num_vertices
+    distance[start] = 0
+
+    # Relax edges repeatedly
+    for _ in range(num_vertices - 1):
+        for u in range(num_vertices):
+            for v in range(num_vertices):
+                weight = adj_matrix[u][v]
+                if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                    distance[v] = distance[u] + weight
+
+    # Check for negative cycles
+    for u in range(num_vertices):
+        for v in range(num_vertices):
+            weight = adj_matrix[u][v]
+            if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
+                raise ValueError("Graph contains a negative-weight cycle")
+
+    return distance
+
+
+from queue import Queue
+def bfsM(adj_matrix, start_node):
+    n = len(adj_matrix)
+    visited = [False] * n
+    queue = Queue()
+
+    visited[start_node] = True
+    queue.put(start_node)
+
+    bfs_result = []
+
+    while not queue.empty():
+        current_node = queue.get()
+        bfs_result.append(str(current_node))  # Store the node value as a string
+
+        for neighbor in range(n):
+            if adj_matrix[current_node][neighbor] == 1 and not visited[neighbor]:
+                visited[neighbor] = True
+                queue.put(neighbor)
+
+    return ' -> '.join(bfs_result)  # Join the node values with ' -> ' delimiter
+
+
+
+import tkinter as tk
+
+def dfsM(adj_matrix, start_node):
+    n = len(adj_matrix)
+    visited = [False] * n
+    stack = []
+
+    stack.append(start_node)
+
+    dfs_result = []
+
+    while stack:
+        current_node = stack.pop()
+        if not visited[current_node]:
+            visited[current_node] = True
+            dfs_result.append(str(current_node))  # Store the node value as a string
+
+            for neighbor in range(n - 1, -1, -1):  # Iterate in reverse order for consistent ordering
+                if adj_matrix[current_node][neighbor] == 1 and not visited[neighbor]:
+                    stack.append(neighbor)
+
+    return ' -> '.join(dfs_result)  # Join the node values with ' -> ' delimiter
+
+
+
+import sys
+
+def dijkstraM(graph, start):
+    num_vertices = len(graph)
+    visited = [False] * num_vertices
+    distance = [sys.maxsize] * num_vertices
+    distance[start] = 0
+
+    for _ in range(num_vertices):
+        min_dist = sys.maxsize
+        min_index = -1
+
+        # Find the vertex with the minimum distance
+        for v in range(num_vertices):
+            if not visited[v] and distance[v] < min_dist:
+                min_dist = distance[v]
+                min_index = v
+
+        # Mark the selected vertex as visited
+        visited[min_index] = True
+
+        # Update distances for the neighboring vertices
+        for v in range(num_vertices):
+            if (
+                not visited[v]
+                and graph[min_index][v] != 0
+                and distance[min_index] != sys.maxsize
+                and distance[min_index] + graph[min_index][v] < distance[v]
+            ):
+                distance[v] = distance[min_index] + graph[min_index][v]
+
+    return distance
+
+
+# kruskal 
+def find(parent, i):
+    while parent[i] != i:
+        i = parent[i]
+    return i
+
+def union(parent, rank, x, y):
+    x_root = find(parent, x)
+    y_root = find(parent, y)
+
+    if rank[x_root] < rank[y_root]:
+        parent[x_root] = y_root
+    elif rank[x_root] > rank[y_root]:
+        parent[y_root] = x_root
+    else:
+        parent[y_root] = x_root
+        rank[x_root] += 1
+
+def kruskalM(graph):
+    num_vertices = len(graph)
+    parent = list(range(num_vertices))
+    rank = [0] * num_vertices
+    min_spanning_tree = []
+
+    edge_count = 0
+    while edge_count < num_vertices - 1:
+        min_weight = float('inf')
+        u = -1
+        v = -1
+
+        for i in range(num_vertices):
+            for j in range(num_vertices):
+                if graph[i][j] < min_weight and find(parent, i) != find(parent, j):
+                    min_weight = graph[i][j]
+                    u = i
+                    v = j
+
+        union(parent, rank, u, v)
+        min_spanning_tree.append((u, v, min_weight))
+        edge_count += 1
+
+    return min_spanning_tree
+
+# prim
+
+import heapq
+
+def primM(graph):
+    # Select a random starting vertex
+    start_vertex = next(iter(graph))
+    visited = set([start_vertex])
+    minimum_spanning_tree = []
+    edges = [
+        (cost, start_vertex, next_vertex)
+        for next_vertex, cost in graph[start_vertex].items()
+    ]
+    heapq.heapify(edges)
+
+    while edges:
+        cost, current_vertex, next_vertex = heapq.heappop(edges)
+        if next_vertex not in visited:
+            visited.add(next_vertex)
+            minimum_spanning_tree.append((current_vertex, next_vertex, cost))
+
+            for neighbor, edge_cost in graph[next_vertex].items():
+                if neighbor not in visited:
+                    heapq.heappush(edges, (edge_cost, next_vertex, neighbor))
+
+    return minimum_spanning_tree
+
+# warshall
+
+def warshallM(graph):
+    nodes = list(graph.keys())
+    num_nodes = len(nodes)
+    distances = {node: {v: float('inf') for v in nodes} for node in nodes}
+    
+    for node in nodes:
+        distances[node][node] = 0
+    
+    for node in graph:
+        for neighbor, weight in graph[node].items():
+            distances[node][neighbor] = weight
+    
+    for k in nodes:
+        for i in nodes:
+            for j in nodes:
+                distances[i][j] = min(distances[i][j], distances[i][k] + distances[k][j])
+    
+    return distances
 
 
 # display the characteristics of the graph
@@ -89,7 +420,7 @@ def create_matrix():
         # clear any previous graph
         plt.clf()
         # Draw the graph
-        pos = nx.spring_layout(G)
+        pos = nx.spring_layout(G)   
         nx.draw(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
         edge_labels = nx.get_edge_attributes(G, 'weight')
 
@@ -104,55 +435,7 @@ def create_matrix():
         button_characteristics.grid(row=11, column=0, columnspan=3, pady=10)
 
 
-    def getalgos():
-        window_algo= tk.Tk()
-
-        def display_dijkstra_result(graph):
-            start_node = int(entry_start_node.get())
-            result = dijkstra(graph.adjacency(), start_node)
-
-            dijkstra_result_label = tk.Label(window_algo, text="Dijkstra Result:")
-            dijkstra_result_label.grid(row=1, column=0, pady=10)
-
-            dijkstra_result_text = tk.Text(window, height=1, width=30)
-            dijkstra_result_text.insert(tk.END, result)
-            dijkstra_result_text.grid(row=1, column=1, pady=10)
-
-        def display_bfs_result(graph):
-            start_node = int(entry_start_node.get())
-            result = bfs(graph.adjacency(), start_node)
-
-            bfs_result_label = tk.Label(window_algo, text="BFS Result:")
-            bfs_result_label.grid(row=2, column=0, pady=10)
-
-            bfs_result_text = tk.Text(window_algo, height=1, width=30)
-            bfs_result_text.insert(tk.END, result)
-            bfs_result_text.grid(row=2, column=1, pady=10)
-
-        def display_dfs_result(graph):
-            start_node = int(entry_start_node.get())
-            result = dfs(graph.adjacency(), start_node)
-
-            dfs_result_label = tk.Label(window_algo, text="DFS Result:")
-            dfs_result_label.grid(row=3, column=0, pady=10)
-
-            dfs_result_text = tk.Text(window_algo, height=1, width=30)
-            dfs_result_text.insert(tk.END, result)
-            dfs_result_text.grid(row=3, column=1, pady=10)
-            
-            # Display BFS result
-        bfs_button = tk.Button(window_algo, text="BFS", command=lambda: display_bfs_result(G))
-        bfs_button.grid(row=13, column=0, pady=10)
-
-            # Display DFS result
-        dfs_button = tk.Button(window_algo, text="DFS", command=lambda: display_dfs_result(G))
-        dfs_button.grid(row=14, column=0, pady=10)
-
-            # Display Dijkstra's result
-        dijkstra_button = tk.Button(window_algo, text="Dijkstra", command=lambda: display_dijkstra_result(G))
-        dijkstra_button.grid(row=15, column=0, pady=10)
-
-        window_algo.mainloop()
+    
   
 
         
@@ -168,15 +451,7 @@ def create_matrix():
 
      # Create the button to create the graph
     button = tk.Button(window, text="Create Graph", command=create_graph)
-    button.grid(row=5,column=2)
-
-    # Create the label for the start node input
-    label_start_node = tk.Label(window, text="Start Node:")
-    label_start_node.grid(row=1, column=0, padx=10, pady=5)
-
-    # Create the entry widget for the start node input
-    entry_start_node = tk.Entry(window, width=10)
-    entry_start_node.grid(row=1, column=1, padx=10, pady=5)
+    button.grid(row=4,column=1)
 
     directed_button = tk.Button(window, text="Directed", command=lambda: setattr(directed_button, "clicked", True))
     directed_button.grid(row=4, column=3, padx=10)
@@ -186,9 +461,7 @@ def create_matrix():
     undirected_button.grid(row=4, column=4, padx=10)
     undirected_button.clicked = False
 
-    button_algo = tk.Button(window,text="Algorithmes",command=getalgos)
-    button_algo.grid(row=4, column=5, padx=10)
-
+    
 
     # Start the Tkinter event loop
     window.mainloop()
