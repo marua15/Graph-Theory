@@ -3,14 +3,25 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
+from tkinter import simpledialog
+
+def display():
+    src = simpledialog.askstring("Sommet Depart", "Entrer un Sommet : ")
+    if src:
+        print(src)
+        return src
+
+
+
 
 # dictionary algorithms 
 import sys
 
-def bellman_fordD(graph, start):
+def bellman_fordD(graph, window):
+    start_node = display()
     num_vertices = len(graph)
     distance = {v: sys.maxsize for v in graph}
-    distance[start] = 0
+    distance[start_node] = 0
 
     # Relax edges repeatedly
     for _ in range(num_vertices - 1):
@@ -105,10 +116,11 @@ def kruskalD(graph):
 
 import heapq
 
-def dijkstraD(graph, start):
+def dijkstraD(graph, start_node):
+    start_node = display()
     distances = {node: float('inf') for node in graph}
-    distances[start] = 0
-    queue = [(0, start)]
+    distances[start_node] = 0
+    queue = [(0, start_node)]
     
     while queue:
         current_distance, current_node = heapq.heappop(queue)
@@ -128,27 +140,38 @@ def dijkstraD(graph, start):
 
 from collections import deque
 
-def bfsD(graph, start):
+def bfsD(graph,window):
+    start_node = display()
+    list = ""
     visited = set()
-    queue = deque([start])
-    
+    queue = [start_node]
+    visited.add(start_node)
+
     while queue:
-        node = queue.popleft()
-        if node not in visited:
-            print(node, end=' ')
-            visited.add(node)
-            neighbors = graph.get(node, [])
-            queue.extend(neighbors)
+        node = queue.pop(0)
+        list = list + str(node) + " "
+        print(node)
+
+        for neighbor in graph[node]:
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+                
+    label=tk.Label(master=window,text=list)
+    list.grid()
+    
+   
 
 
-def dfsD(graph, start, visited=None):
+def dfsD(graph, window, visited=None):
+    start_node = display()
     if visited is None:
         visited = set()
     
-    visited.add(start)
-    print(start)
+    visited.add(start_node)
+    print(start_node)
     
-    for neighbor in graph[start]:
+    for neighbor in graph[start_node]:
         if neighbor not in visited:
             dfsD(graph, neighbor, visited)
 
@@ -156,10 +179,11 @@ def dfsD(graph, start, visited=None):
 # adjacency matrix algorithms
 import sys
 
-def bellman_fordM(adj_matrix, start):
+def bellman_fordM(adj_matrix, window):
+    start_node = display()
     num_vertices = len(adj_matrix)
     distance = [sys.maxsize] * num_vertices
-    distance[start] = 0
+    distance[start_node] = 0
 
     # Relax edges repeatedly
     for _ in range(num_vertices - 1):
@@ -180,7 +204,8 @@ def bellman_fordM(adj_matrix, start):
 
 
 from queue import Queue
-def bfsM(adj_matrix, start_node):
+def bfsM(adj_matrix, window):
+    start_node = display()
     n = len(adj_matrix)
     visited = [False] * n
     queue = Queue()
@@ -205,7 +230,8 @@ def bfsM(adj_matrix, start_node):
 
 import tkinter as tk
 
-def dfsM(adj_matrix, start_node):
+def dfsM(adj_matrix, window):
+    start_node = display()
     n = len(adj_matrix)
     visited = [False] * n
     stack = []
@@ -230,11 +256,12 @@ def dfsM(adj_matrix, start_node):
 
 import sys
 
-def dijkstraM(graph, start):
+def dijkstraM(graph, window):
+    start_node = display()
     num_vertices = len(graph)
     visited = [False] * num_vertices
     distance = [sys.maxsize] * num_vertices
-    distance[start] = 0
+    distance[start_node] = 0
 
     for _ in range(num_vertices):
         min_dist = sys.maxsize
@@ -433,11 +460,28 @@ def create_matrix():
         # Display the characteristics of the graph
         button_characteristics = tk.Button(window, text="Get characteristics", command=lambda:display_graph_characteristics(G))
         button_characteristics.grid(row=11, column=0, columnspan=3, pady=10)
+        def get_algorithms(): 
+                window_algo = tk.Tk()
+                BFS = tk.Button(window_algo, text="BFS",command=bfsM(G,0))
+                BFS.grid(row=1,column=2)
+                DFS = tk.Button(window_algo,text="DFS",command=dfsM(G,0))
+                DFS.grid(row=2,column=2)
+                BellmanFord = tk.Button(window_algo,text="Bellman Ford",command=bellman_fordM(G,0))
+                BellmanFord.grid(row=3,column=2)
+                Prims = tk.Buton(window_algo,text="Prims",command=primM(G))
+                Prims.grid(row=4,column=2)
+                Kruskal = tk.Button(window_algo,text="Kruskal",command=kruskalM(G))
+                Kruskal.grid(row=5,column=2)
+                Warshall = tk.Button(window_algo,text="Warshall",command=warshallM(G))
+                Warshall.grid(row=6,column=2)
+                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=dijkstraM(G,0))
+                Dijikstra.grid(row=7,column=2)
 
+                window_algo.mainloop()
 
-    
-  
-
+         # Display the algorithms of the graph
+        button_algo1 = tk.Button(window, text="Get algorithms", command=lambda:get_algorithms)
+        button_algo1.grid(row=11, column=0, columnspan=3, pady=10)
         
 
     # Create the Tkinter window
@@ -524,6 +568,30 @@ def create_dictionary():
             # create button to get the characteristics of the graph
             button_characteristics = tk.Button(root, text="Get Characteristics", command=lambda: display_graph_characteristics(G))
             button_characteristics.grid(row=5, column=0)
+
+            def get_algorithms(): 
+                window_algo = tk.Tk()
+                window_algo.geometry("400x400")
+                
+                BFS = tk.Button(window_algo, text="BFS",command=lambda: bfsD(G,window_algo))
+                BFS.grid(row=1,column=2)
+                DFS = tk.Button(window_algo,text="DFS")
+                DFS.grid(row=2,column=2)
+                BellmanFord = tk.Button(window_algo,text="Bellman Ford")
+                BellmanFord.grid(row=3,column=2)
+                Prims = tk.Button(window_algo,text="Prims")
+                Prims.grid(row=4,column=2)
+                Kruskal = tk.Button(window_algo,text="Kruskal")
+                Kruskal.grid(row=5,column=2)
+                Dijikstra = tk.Button(window_algo,text="Dijikstra")
+                Dijikstra.grid(row=6,column=22)
+
+                window_algo.mainloop()
+
+            # create button to get the algorithms graph
+            button_algo = tk.Button(root, text="Get Algorithms",command= get_algorithms)
+            button_algo.grid(row=6, column=0)
+
 
         # Create a tkinter window
         root = tk.Tk()
