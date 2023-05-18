@@ -4,6 +4,16 @@ import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
 from tkinter import simpledialog
+import heapq
+from collections import deque
+from queue import Queue
+import sys
+from heapq import heappop, heappush,heapify
+
+
+
+
+
 
 def display():
     src = simpledialog.askstring("Sommet Depart", "Entrer un Sommet : ")
@@ -11,113 +21,27 @@ def display():
         print(src)
         return src
 
-# h
+def display_e():
+    prompt = "Enter the number of edges:"
+    edge = simpledialog.askstring("Input", prompt)
+    if edge:
+        print(edge)
+        return edge
+
+
 
 
 # dictionary algorithms 
-import sys
 
-def bellman_fordD(graph, window):
+
+
+
+
+def dijikstraD(graph,window):
     start_node = display()
-    num_vertices = len(graph)
-    distance = {v: sys.maxsize for v in graph}
-    distance[start_node] = 0
-
-    # Relax edges repeatedly
-    for _ in range(num_vertices - 1):
-        for u in graph:
-            for v in graph[u]:
-                weight = graph[u][v]
-                if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
-                    distance[v] = distance[u] + weight
-
-    # Check for negative cycles
-    for u in graph:
-        for v in graph[u]:
-            weight = graph[u][v]
-            if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
-                raise ValueError("Graph contains a negative-weight cycle")
-
-    return distance
-
-
-import heapq
-
-def primD(graph):
-    # Select a random starting vertex
-    start_vertex = next(iter(graph))
-    visited = set([start_vertex])
-    minimum_spanning_tree = []
-    edges = [
-        (cost, start_vertex, next_vertex)
-        for next_vertex, cost in graph[start_vertex].items()
-    ]
-    heapq.heapify(edges)
-
-    while edges:
-        cost, current_vertex, next_vertex = heapq.heappop(edges)
-        if next_vertex not in visited:
-            visited.add(next_vertex)
-            minimum_spanning_tree.append((current_vertex, next_vertex, cost))
-
-            for neighbor, edge_cost in graph[next_vertex].items():
-                if neighbor not in visited:
-                    heapq.heappush(edges, (edge_cost, next_vertex, neighbor))
-
-    return minimum_spanning_tree
-
-# kruskal
-class DisjointSet:
-    def __init__(self, vertices):
-        self.parent = {v: v for v in vertices}
-        self.rank = {v: 0 for v in vertices}
-
-    def find(self, vertex):
-        if self.parent[vertex] != vertex:
-            self.parent[vertex] = self.find(self.parent[vertex])
-        return self.parent[vertex]
-
-    def union(self, vertex1, vertex2):
-        root1 = self.find(vertex1)
-        root2 = self.find(vertex2)
-        if root1 != root2:
-            if self.rank[root1] < self.rank[root2]:
-                self.parent[root1] = root2
-            elif self.rank[root1] > self.rank[root2]:
-                self.parent[root2] = root1
-            else:
-                self.parent[root2] = root1
-                self.rank[root1] += 1
-
-
-def kruskalD(graph):
-    vertices = set(graph.keys())
-    disjoint_set = DisjointSet(vertices)
-    minimum_spanning_tree = []
-    edges = []
-
-    # Collect all edges in a list
-    for vertex, neighbors in graph.items():
-        for neighbor, weight in neighbors.items():
-            edges.append((weight, vertex, neighbor))
-
-    # Sort the edges in ascending order of weight
-    edges.sort()
-
-    for edge in edges:
-        weight, vertex1, vertex2 = edge
-        if disjoint_set.find(vertex1) != disjoint_set.find(vertex2):
-            disjoint_set.union(vertex1, vertex2)
-            minimum_spanning_tree.append((vertex1, vertex2, weight))
-
-    return minimum_spanning_tree
-
-
-
-import heapq
-
-def dijkstraD(graph, start_node):
-    start_node = display()
+    new_window = tk.Toplevel(window)
+    new_window.geometry("400x300")
+    new_window.title("Values")
     distances = {node: float('inf') for node in graph}
     distances[start_node] = 0
     queue = [(0, start_node)]
@@ -129,42 +53,49 @@ def dijkstraD(graph, start_node):
             continue
         
         for neighbor, weight in graph[current_node].items():
-            distance = current_distance + weight
+            distance = current_distance +  sum(weight.values())
             
             if distance < distances[neighbor]:
                 distances[neighbor] = distance
                 heapq.heappush(queue, (distance, neighbor))
     
-    return distances
+    # return distances
+    label_values = tk.Label(new_window, text="values: \n{}".format(distances), font=(15))
+    label_values.pack()
 
 
-from collections import deque
 
 def bfsD(graph,window):
     start_node = display()
+    new_window = tk.Toplevel(window)
+    new_window.geometry()
+    new_window.title("Values")
     list = ""
     visited = set()
     queue = [start_node]
     visited.add(start_node)
-
+    array=[]
     while queue:
         node = queue.pop(0)
         list = list + str(node) + " "
         print(node)
+        array.append(node)
+    
 
         for neighbor in graph[node]:
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
-                
-    label=tk.Label(master=window,text=list)
-    list.grid()
-    
    
+        label_values = tk.Label(new_window, text="values: {}".format(node), font=(15))
+        label_values.pack()
 
 
 def dfsD(graph, window, visited=None):
     start_node = display()
+    new_window = tk.Toplevel(window)
+    new_window.geometry()
+    new_window.title("Values")
     if visited is None:
         visited = set()
     
@@ -175,35 +106,12 @@ def dfsD(graph, window, visited=None):
         if neighbor not in visited:
             dfsD(graph, neighbor, visited)
 
+            label_values = tk.Label(new_window, text="values: {}".format(start_node), font=(15))
+            label_values.pack()
 
 # adjacency matrix algorithms
-import sys
-
-def bellman_fordM(adj_matrix, window):
-    start_node = display()
-    num_vertices = len(adj_matrix)
-    distance = [sys.maxsize] * num_vertices
-    distance[start_node] = 0
-
-    # Relax edges repeatedly
-    for _ in range(num_vertices - 1):
-        for u in range(num_vertices):
-            for v in range(num_vertices):
-                weight = adj_matrix[u][v]
-                if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
-                    distance[v] = distance[u] + weight
-
-    # Check for negative cycles
-    for u in range(num_vertices):
-        for v in range(num_vertices):
-            weight = adj_matrix[u][v]
-            if distance[u] != sys.maxsize and distance[u] + weight < distance[v]:
-                raise ValueError("Graph contains a negative-weight cycle")
-
-    return distance
 
 
-from queue import Queue
 def bfsM(adj_matrix, window):
     start_node = display()
     n = len(adj_matrix)
@@ -228,7 +136,6 @@ def bfsM(adj_matrix, window):
 
 
 
-import tkinter as tk
 
 def dfsM(adj_matrix, window):
     start_node = display()
@@ -254,7 +161,6 @@ def dfsM(adj_matrix, window):
 
 
 
-import sys
 
 def dijkstraM(graph, window):
     start_node = display()
@@ -334,7 +240,6 @@ def kruskalM(graph):
 
 # prim
 
-import heapq
 
 def primM(graph):
     # Select a random starting vertex
@@ -466,8 +371,6 @@ def create_matrix():
                 BFS.grid(row=1,column=2)
                 DFS = tk.Button(window_algo,text="DFS",command=dfsM(G,0))
                 DFS.grid(row=2,column=2)
-                BellmanFord = tk.Button(window_algo,text="Bellman Ford",command=bellman_fordM(G,0))
-                BellmanFord.grid(row=3,column=2)
                 Prims = tk.Buton(window_algo,text="Prims",command=primM(G))
                 Prims.grid(row=4,column=2)
                 Kruskal = tk.Button(window_algo,text="Kruskal",command=kruskalM(G))
@@ -552,6 +455,9 @@ def create_dictionary():
             label_values.pack()
 
         G = nx.Graph()
+        
+        # clear any previous graph
+        plt.clf()
         # Display the graph
         def display_graph():
             pos = nx.spring_layout(G)
@@ -574,16 +480,10 @@ def create_dictionary():
                 window_algo.geometry("400x400")
                 
                 BFS = tk.Button(window_algo, text="BFS",command=lambda: bfsD(G,window_algo))
-                BFS.grid(row=1,column=2)
-                DFS = tk.Button(window_algo,text="DFS")
-                DFS.grid(row=2,column=2)
-                BellmanFord = tk.Button(window_algo,text="Bellman Ford")
-                BellmanFord.grid(row=3,column=2)
-                Prims = tk.Button(window_algo,text="Prims")
-                Prims.grid(row=4,column=2)
-                Kruskal = tk.Button(window_algo,text="Kruskal")
-                Kruskal.grid(row=5,column=2)
-                Dijikstra = tk.Button(window_algo,text="Dijikstra")
+                BFS.grid(row=1,column=22)
+                DFS = tk.Button(window_algo,text="DFS",command=lambda:bfsD(G,window_algo))
+                DFS.grid(row=2,column=22)
+                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=lambda:dijikstraD(G,window_algo))
                 Dijikstra.grid(row=6,column=22)
 
                 window_algo.mainloop()
