@@ -32,11 +32,6 @@ def display_e():
 
 
 # dictionary algorithms 
-
-
-
-
-
 def dijikstraD(graph,window):
     start_node = display()
     new_window = tk.Toplevel(window)
@@ -109,61 +104,14 @@ def dfsD(graph, window, visited=None):
             label_values = tk.Label(new_window, text="values: {}".format(start_node), font=(15))
             label_values.pack()
 
+
+
 # adjacency matrix algorithms
-
-
-def bfsM(adj_matrix, window):
-    start_node = display()
-    n = len(adj_matrix)
-    visited = [False] * n
-    queue = Queue()
-
-    visited[start_node] = True
-    queue.put(start_node)
-
-    bfs_result = []
-
-    while not queue.empty():
-        current_node = queue.get()
-        bfs_result.append(str(current_node))  # Store the node value as a string
-
-        for neighbor in range(n):
-            if adj_matrix[current_node][neighbor] == 1 and not visited[neighbor]:
-                visited[neighbor] = True
-                queue.put(neighbor)
-
-    return ' -> '.join(bfs_result)  # Join the node values with ' -> ' delimiter
-
-
-
-
-def dfsM(adj_matrix, window):
-    start_node = display()
-    n = len(adj_matrix)
-    visited = [False] * n
-    stack = []
-
-    stack.append(start_node)
-
-    dfs_result = []
-
-    while stack:
-        current_node = stack.pop()
-        if not visited[current_node]:
-            visited[current_node] = True
-            dfs_result.append(str(current_node))  # Store the node value as a string
-
-            for neighbor in range(n - 1, -1, -1):  # Iterate in reverse order for consistent ordering
-                if adj_matrix[current_node][neighbor] == 1 and not visited[neighbor]:
-                    stack.append(neighbor)
-
-    return ' -> '.join(dfs_result)  # Join the node values with ' -> ' delimiter
-
-
-
-
 def dijkstraM(graph, window):
     start_node = display()
+    new_window = tk.Toplevel(window)
+    new_window.geometry()
+    new_window.title("Values")
     num_vertices = len(graph)
     visited = [False] * num_vertices
     distance = [sys.maxsize] * num_vertices
@@ -192,7 +140,9 @@ def dijkstraM(graph, window):
             ):
                 distance[v] = distance[min_index] + graph[min_index][v]
 
-    return distance
+    # return distance
+    label_values = tk.Label(new_window, text="values: \n {}".format(distance), font=(15))
+    label_values.pack()
 
 
 # kruskal 
@@ -213,7 +163,10 @@ def union(parent, rank, x, y):
         parent[y_root] = x_root
         rank[x_root] += 1
 
-def kruskalM(graph):
+def kruskalM(graph,window):
+    new_window = tk.Toplevel(window)
+    new_window.geometry()
+    new_window.title("Values")
     num_vertices = len(graph)
     parent = list(range(num_vertices))
     rank = [0] * num_vertices
@@ -236,12 +189,15 @@ def kruskalM(graph):
         min_spanning_tree.append((u, v, min_weight))
         edge_count += 1
 
-    return min_spanning_tree
+    # return min_spanning_tree
+    label_values = tk.Label(new_window, text="values: \n {}".format(min_spanning_tree), font=(15))
+    label_values.pack()
 
 # prim
-
-
-def primM(graph):
+def primM(graph,window):
+    new_window = tk.Toplevel(window)
+    new_window.geometry()
+    new_window.title("Values")
     # Select a random starting vertex
     start_vertex = next(iter(graph))
     visited = set([start_vertex])
@@ -262,28 +218,10 @@ def primM(graph):
                 if neighbor not in visited:
                     heapq.heappush(edges, (edge_cost, next_vertex, neighbor))
 
-    return minimum_spanning_tree
+    # return minimum_spanning_tree
+    label_values = tk.Label(new_window, text="values: \n {}".format(minimum_spanning_tree), font=(15))
+    label_values.pack()
 
-# warshall
-
-def warshallM(graph):
-    nodes = list(graph.keys())
-    num_nodes = len(nodes)
-    distances = {node: {v: float('inf') for v in nodes} for node in nodes}
-    
-    for node in nodes:
-        distances[node][node] = 0
-    
-    for node in graph:
-        for neighbor, weight in graph[node].items():
-            distances[node][neighbor] = weight
-    
-    for k in nodes:
-        for i in nodes:
-            for j in nodes:
-                distances[i][j] = min(distances[i][j], distances[i][k] + distances[k][j])
-    
-    return distances
 
 
 # display the characteristics of the graph
@@ -348,6 +286,7 @@ def create_matrix():
             for j, weight in enumerate(weights):
                 if weight != '0':
                     G.add_edge(i, j, weight=float(weight))
+                    
 
         # clear any previous graph
         plt.clf()
@@ -365,26 +304,20 @@ def create_matrix():
         # Display the characteristics of the graph
         button_characteristics = tk.Button(window, text="Get characteristics", command=lambda:display_graph_characteristics(G))
         button_characteristics.grid(row=11, column=0, columnspan=3, pady=10)
-        def get_algorithms(): 
-                window_algo = tk.Tk()
-                BFS = tk.Button(window_algo, text="BFS",command=bfsM(G,0))
-                BFS.grid(row=1,column=2)
-                DFS = tk.Button(window_algo,text="DFS",command=dfsM(G,0))
-                DFS.grid(row=2,column=2)
-                Prims = tk.Buton(window_algo,text="Prims",command=primM(G))
-                Prims.grid(row=4,column=2)
-                Kruskal = tk.Button(window_algo,text="Kruskal",command=kruskalM(G))
-                Kruskal.grid(row=5,column=2)
-                Warshall = tk.Button(window_algo,text="Warshall",command=warshallM(G))
-                Warshall.grid(row=6,column=2)
-                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=dijkstraM(G,0))
-                Dijikstra.grid(row=7,column=2)
+        def get_algorithmsM(): 
+                window_algoM = tk.Tk()
+                Prims = tk.Button(window_algoM,text="Prims",command=lambda:primM(G,window_algoM))
+                Prims.grid(row=1,column=2)
+                Kruskal = tk.Button(window_algoM,text="Kruskal",command=lambda:kruskalM(G,window_algoM))
+                Kruskal.grid(row=2,column=2)
+                Dijikstra = tk.Button(window_algoM,text="Dijikstra",command=lambda:dijkstraM(G,window_algoM))
+                Dijikstra.grid(row=3,column=2)
 
-                window_algo.mainloop()
+                window_algoM.mainloop()
 
          # Display the algorithms of the graph
-        button_algo1 = tk.Button(window, text="Get algorithms", command=lambda:get_algorithms)
-        button_algo1.grid(row=11, column=0, columnspan=3, pady=10)
+        button_algo1 = tk.Button(window, text="Get algorithms", command=get_algorithmsM)
+        button_algo1.grid(row=12, column=0, columnspan=3, pady=10)
         
 
     # Create the Tkinter window
