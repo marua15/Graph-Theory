@@ -10,7 +10,7 @@ from tkinter import simpledialog
 def display():
     src = simpledialog.askstring("Sommet Depart", "Entrer un Sommet : ")
     if src:
-        # print(src)
+        print(src)
         return src
 
 # dijkstra
@@ -350,18 +350,18 @@ def create_matrix():
         def get_algorithmsM(): 
                 window_algoM = tk.Tk()
                 window_algoM.geometry()
-                Prims = tk.Button(window_algoM,text="Prims",command=lambda:prim(G,window_algoM))
-                Prims.grid(row=1,column=1)
-                Kruskal = tk.Button(window_algoM,text="Kruskal",command=lambda:kruskal(G,window_algoM))
-                Kruskal.grid(row=1,column=2)
-                Dijikstra = tk.Button(window_algoM,text="Dijikstra",command=lambda:dijkstra(G,window_algoM))
-                Dijikstra.grid(row=1,column=3)
-                DFS = tk.Button(window_algoM, text="DFS", command=lambda: dfs(G, window_algoM))
-                DFS.grid(row=1, column=4)
-                BFS = tk.Button(window_algoM, text="BFS", command=lambda: bfs(G, window_algoM))
-                BFS.grid(row=1, column=5)
-                Warshall = tk.Button(window_algoM, text="Warshall", command=lambda: warshall(G, window_algoM))
-                Warshall.grid(row=1, column=6)
+                Prims = tk.Button(window_algoM,text="Prims",width= 10,command=lambda:prim(G,window_algoM))
+                Prims.grid(row=1,column=0)
+                Kruskal = tk.Button(window_algoM,text="Kruskal", width=10,command=lambda:kruskal(G,window_algoM))
+                Kruskal.grid(row=2,column=0)
+                Dijikstra = tk.Button(window_algoM,text="Dijikstra", width=10,command=lambda:dijkstra(G,window_algoM))
+                Dijikstra.grid(row=3,column=0)
+                DFS = tk.Button(window_algoM, text="DFS", width=10, command=lambda: dfs(G, window_algoM))
+                DFS.grid(row=4, column=0)
+                BFS = tk.Button(window_algoM, text="BFS", width=10, command=lambda: bfs(G, window_algoM))
+                BFS.grid(row=5, column=0)
+                Warshall = tk.Button(window_algoM, text="Warshall", width=10, command=lambda: warshall(G, window_algoM))
+                Warshall.grid(row=6, column=0)
 
 
                 window_algoM.mainloop()
@@ -461,18 +461,18 @@ def create_dictionary():
                 window_algo = tk.Tk()
                 window_algo.geometry("400x400")
                 
-                BFS = tk.Button(window_algo, text="BFS",command=lambda: bfs(G,window_algo))
-                BFS.grid(row=1,column=1)
-                DFS = tk.Button(window_algo,text="DFS",command=lambda:dfs(G,window_algo))
-                DFS.grid(row=1,column=2)
-                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=lambda:dijkstra(G,window_algo))
-                Dijikstra.grid(row=1,column=3)
-                Prim = tk.Button(window_algo,text="Prim",command=lambda:prim(G,window_algo))
-                Prim.grid(row=1,column=4)
-                Kruskal = tk.Button(window_algo,text="Kruskal",command=lambda:kruskal(G,window_algo))
-                Kruskal.grid(row=1,column=5)
-                Warshall = tk.Button(window_algo,text="Warshall",command=lambda:warshall(G,window_algo))
-                Warshall.grid(row=1,column=6)
+                BFS = tk.Button(window_algo, text="BFS", width=10,command=lambda: bfs(G,window_algo))
+                BFS.grid(row=1,column=0)
+                DFS = tk.Button(window_algo,text="DFS",width=10,command=lambda:dfs(G,window_algo))
+                DFS.grid(row=2,column=0)
+                Dijikstra = tk.Button(window_algo,text="Dijikstra",width=10,command=lambda:dijkstra(G,window_algo))
+                Dijikstra.grid(row=3,column=0)
+                Prim = tk.Button(window_algo,text="Prim",width=10,command=lambda:prim(G,window_algo))
+                Prim.grid(row=4,column=0)
+                Kruskal = tk.Button(window_algo,text="Kruskal",width=10,command=lambda:kruskal(G,window_algo))
+                Kruskal.grid(row=5,column=0)
+                Warshall = tk.Button(window_algo,text="Warshall",width=10,command=lambda:warshall(G,window_algo))
+                Warshall.grid(row=6,column=0)
 
                 window_algo.mainloop()
 
