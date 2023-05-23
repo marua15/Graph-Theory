@@ -1,234 +1,278 @@
 import tkinter as tk
 import networkx as nx
+import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
 from tkinter import simpledialog
-import heapq
-from collections import deque
-from queue import Queue
-import sys
-from heapq import heappop, heappush,heapify
-
-
-
-
 
 
 def display():
     src = simpledialog.askstring("Sommet Depart", "Entrer un Sommet : ")
     if src:
-        print(src)
+        # print(src)
         return src
 
-def display_e():
-    prompt = "Enter the number of edges:"
-    edge = simpledialog.askstring("Input", prompt)
-    if edge:
-        print(edge)
-        return edge
+# dijkstra
+def dijkstra(G, window):
+    # Get the source node for Dijkstra's algorithm from user input or selection
+    source_node = int(display())  # Replace with appropriate method to get the source node
 
+    # Perform Dijkstra's algorithm on the graph
+    shortest_paths = nx.single_source_dijkstra_path(G, source=source_node)
 
+    # Clear any previous graph
+    plt.clf()
 
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
 
-# dictionary algorithms 
-def dijikstraD(graph,window):
-    start_node = display()
-    new_window = tk.Toplevel(window)
-    new_window.geometry("400x300")
-    new_window.title("Values")
-    distances = {node: float('inf') for node in graph}
-    distances[start_node] = 0
-    queue = [(0, start_node)]
-    
-    while queue:
-        current_distance, current_node = heapq.heappop(queue)
-        
-        if current_distance > distances[current_node]:
-            continue
-        
-        for neighbor, weight in graph[current_node].items():
-            distance = current_distance +  sum(weight.values())
-            
-            if distance < distances[neighbor]:
-                distances[neighbor] = distance
-                heapq.heappush(queue, (distance, neighbor))
-    
-    # return distances
-    label_values = tk.Label(new_window, text="values: \n{}".format(distances), font=(15))
-    label_values.pack()
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
 
+    # Display the shortest path details
+    details_label = tk.Label(window, text="Shortest Paths (Dijkstra's Algorithm):")
+    details_label.grid(row=11, column=0, columnspan=3)
 
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
 
-def bfsD(graph,window):
-    start_node = display()
-    new_window = tk.Toplevel(window)
-    new_window.geometry()
-    new_window.title("Values")
-    list = ""
+    # Add the details of each shortest path to the text widget
+    for node in shortest_paths:
+        path = shortest_paths[node]
+        path_length = nx.single_source_dijkstra_path_length(G, source=source_node)[node]
+        details_text.insert(tk.END, f"Node {node}: Path: {path}, Path Length: {path_length}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+# kruskal 
+def kruskal(G, window):
+    # Perform Kruskal's algorithm on the graph
+    mst_edges = nx.minimum_spanning_edges(G, algorithm='kruskal', data=False)
+    mst_edges_list = list(mst_edges)
+
+    # Create a new graph for the minimum spanning tree
+    mst_graph = nx.Graph()
+
+    # Add the nodes to the minimum spanning tree graph
+    mst_graph.add_nodes_from(G.nodes())
+
+    # Add the edges to the minimum spanning tree graph based on the selected edges
+    for edge in mst_edges_list:
+        node1, node2 = edge
+        weight = G[node1][node2]['weight']
+        mst_graph.add_edge(node1, node2, weight=weight)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the minimum spanning tree graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+    nx.draw_networkx_edges(mst_graph, pos, width=2, edge_color='red')
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the minimum spanning tree details
+    details_label = tk.Label(window, text="Minimum Spanning Tree (Kruskal's Algorithm):")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the details of each edge in the minimum spanning tree to the text widget
+    for edge in mst_edges_list:
+        node1, node2 = edge
+        weight = G[node1][node2]['weight']
+        details_text.insert(tk.END, f"Edge: ({node1}, {node2}), Weight: {weight}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+# prim
+def prim(G, window):
+    # Perform Prim's algorithm on the graph
+    mst_edges = nx.minimum_spanning_edges(G, algorithm='prim', data=False)
+    mst_edges_list = list(mst_edges)
+
+    # Create a new graph for the minimum spanning tree
+    mst_graph = nx.Graph()
+
+    # Add the nodes to the minimum spanning tree graph
+    mst_graph.add_nodes_from(G.nodes())
+
+    # Add the edges to the minimum spanning tree graph based on the selected edges
+    for edge in mst_edges_list:
+        node1, node2 = edge
+        weight = G[node1][node2]['weight']
+        mst_graph.add_edge(node1, node2, weight=weight)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the minimum spanning tree graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+    nx.draw_networkx_edges(mst_graph, pos, width=2, edge_color='red')
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the minimum spanning tree details
+    details_label = tk.Label(window, text="Minimum Spanning Tree (Prim's Algorithm):")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the details of each edge in the minimum spanning tree to the text widget
+    for edge in mst_edges_list:
+        node1, node2 = edge
+        weight = G[node1][node2]['weight']
+        details_text.insert(tk.END, f"Edge: ({node1}, {node2}), Weight: {weight}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+# DFS
+def dfs(G, window):
+    # Perform Depth-First Search (DFS) on the graph
     visited = set()
+    dfs_traversal = []
+
+    def dfs(node):
+        visited.add(node)
+        dfs_traversal.append(node)
+
+        for neighbor in G.neighbors(node):
+            if neighbor not in visited:
+                dfs(neighbor)
+
+    # Get the starting node for DFS from user input or selection
+    start_node = int(display())  # Replace with appropriate method to get the starting node
+
+    dfs(start_node)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the DFS traversal details
+    details_label = tk.Label(window, text="DFS Traversal:")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the nodes visited in the DFS traversal to the text widget
+    for node in dfs_traversal:
+        details_text.insert(tk.END, f"{node}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+# BFS
+def bfs(G, window):
+    # Perform Breadth-First Search (BFS) on the graph
+    visited = set()
+    bfs_traversal = []
+
+    # Get the starting node for BFS from user input or selection
+    start_node = int(display())  # Replace with appropriate method to get the starting node
+
     queue = [start_node]
     visited.add(start_node)
-    array=[]
-    while queue:
-        node = queue.pop(0)
-        list = list + str(node) + " "
-        print(node)
-        array.append(node)
-    
 
-        for neighbor in graph[node]:
+    while queue:
+        node = queue.pop(start_node)
+        bfs_traversal.append(node)
+
+        for neighbor in G.neighbors(node):
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
-   
-        label_values = tk.Label(new_window, text="values: {}".format(node), font=(15))
-        label_values.pack()
 
+    # Clear any previous graph
+    plt.clf()
 
-def dfsD(graph, window, visited=None):
-    start_node = display()
-    new_window = tk.Toplevel(window)
-    new_window.geometry()
-    new_window.title("Values")
-    if visited is None:
-        visited = set()
-    
-    visited.add(start_node)
-    print(start_node)
-    
-    for neighbor in graph[start_node]:
-        if neighbor not in visited:
-            dfsD(graph, neighbor, visited)
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
 
-            label_values = tk.Label(new_window, text="values: {}".format(start_node), font=(15))
-            label_values.pack()
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
 
+    # Display the BFS traversal details
+    details_label = tk.Label(window, text="BFS Traversal:")
+    details_label.grid(row=11, column=0, columnspan=3)
 
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
 
-# adjacency matrix algorithms
-def dijkstraM(graph, window):
-    start_node = display()
-    new_window = tk.Toplevel(window)
-    new_window.geometry()
-    new_window.title("Values")
-    num_vertices = len(graph)
-    visited = [False] * num_vertices
-    distance = [sys.maxsize] * num_vertices
-    distance[start_node] = 0
+    # Add the nodes visited in the BFS traversal to the text widget
+    for node in bfs_traversal:
+        details_text.insert(tk.END, f"{node}\n")
 
-    for _ in range(num_vertices):
-        min_dist = sys.maxsize
-        min_index = -1
+    details_text.config(state=tk.DISABLED)
 
-        # Find the vertex with the minimum distance
-        for v in range(num_vertices):
-            if not visited[v] and distance[v] < min_dist:
-                min_dist = distance[v]
-                min_index = v
+# Warshall
+def warshall(G, window):
+    # Perform Floyd-Warshall algorithm on the graph
+    dist_matrix = nx.floyd_warshall_numpy(G)
 
-        # Mark the selected vertex as visited
-        visited[min_index] = True
+    # Clear any previous graph
+    plt.clf()
 
-        # Update distances for the neighboring vertices
-        for v in range(num_vertices):
-            if (
-                not visited[v]
-                and graph[min_index][v] != 0
-                and distance[min_index] != sys.maxsize
-                and distance[min_index] + graph[min_index][v] < distance[v]
-            ):
-                distance[v] = distance[min_index] + graph[min_index][v]
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
 
-    # return distance
-    label_values = tk.Label(new_window, text="values: \n {}".format(distance), font=(15))
-    label_values.pack()
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
 
+    # Display the distance matrix
+    details_label = tk.Label(window, text="Distance Matrix (Floyd-Warshall Algorithm):")
+    details_label.grid(row=11, column=0, columnspan=3)
 
-# kruskal 
-def find(parent, i):
-    while parent[i] != i:
-        i = parent[i]
-    return i
+    # Create a text widget to display the distance matrix
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
 
-def union(parent, rank, x, y):
-    x_root = find(parent, x)
-    y_root = find(parent, y)
+    # Add the distances between each pair of nodes to the text widget
+    for i in range(len(dist_matrix)):
+        for j in range(len(dist_matrix[i])):
+            details_text.insert(tk.END, f"From Node {i} to Node {j}: {dist_matrix[i][j]}\n")
 
-    if rank[x_root] < rank[y_root]:
-        parent[x_root] = y_root
-    elif rank[x_root] > rank[y_root]:
-        parent[y_root] = x_root
-    else:
-        parent[y_root] = x_root
-        rank[x_root] += 1
-
-def kruskalM(graph,window):
-    new_window = tk.Toplevel(window)
-    new_window.geometry()
-    new_window.title("Values")
-    num_vertices = len(graph)
-    parent = list(range(num_vertices))
-    rank = [0] * num_vertices
-    min_spanning_tree = []
-
-    edge_count = 0
-    while edge_count < num_vertices - 1:
-        min_weight = float('inf')
-        u = -1
-        v = -1
-
-        for i in range(num_vertices):
-            for j in range(num_vertices):
-                if graph[i][j] < min_weight and find(parent, i) != find(parent, j):
-                    min_weight = graph[i][j]
-                    u = i
-                    v = j
-
-        union(parent, rank, u, v)
-        min_spanning_tree.append((u, v, min_weight))
-        edge_count += 1
-
-    # return min_spanning_tree
-    label_values = tk.Label(new_window, text="values: \n {}".format(min_spanning_tree), font=(15))
-    label_values.pack()
-
-# prim
-def primM(graph,window):
-    new_window = tk.Toplevel(window)
-    new_window.geometry()
-    new_window.title("Values")
-    # Select a random starting vertex
-    start_vertex = next(iter(graph))
-    visited = set([start_vertex])
-    minimum_spanning_tree = []
-    edges = [
-        (cost, start_vertex, next_vertex)
-        for next_vertex, cost in graph[start_vertex].items()
-    ]
-    heapq.heapify(edges)
-
-    while edges:
-        cost, current_vertex, next_vertex = heapq.heappop(edges)
-        if next_vertex not in visited:
-            visited.add(next_vertex)
-            minimum_spanning_tree.append((current_vertex, next_vertex, cost))
-
-            for neighbor, edge_cost in graph[next_vertex].items():
-                if neighbor not in visited:
-                    heapq.heappush(edges, (edge_cost, next_vertex, neighbor))
-
-    # return minimum_spanning_tree
-    label_values = tk.Label(new_window, text="values: \n {}".format(minimum_spanning_tree), font=(15))
-    label_values.pack()
-
-
+    details_text.config(state=tk.DISABLED)
 
 # display the characteristics of the graph
 def display_graph_characteristics(G):
         # Create a tkinter window
         window = tk.Tk()
-        window.geometry("500x500")
+        window.geometry("300x300")
 
         # Calculate and display the number of nodes and edges in the graph
         num_nodes = G.number_of_nodes()
@@ -306,12 +350,20 @@ def create_matrix():
         button_characteristics.grid(row=11, column=0, columnspan=3, pady=10)
         def get_algorithmsM(): 
                 window_algoM = tk.Tk()
-                Prims = tk.Button(window_algoM,text="Prims",command=lambda:primM(G,window_algoM))
-                Prims.grid(row=1,column=2)
-                Kruskal = tk.Button(window_algoM,text="Kruskal",command=lambda:kruskalM(G,window_algoM))
-                Kruskal.grid(row=2,column=2)
-                Dijikstra = tk.Button(window_algoM,text="Dijikstra",command=lambda:dijkstraM(G,window_algoM))
-                Dijikstra.grid(row=3,column=2)
+                window_algoM.geometry()
+                Prims = tk.Button(window_algoM,text="Prims",command=lambda:prim(G,window_algoM))
+                Prims.grid(row=1,column=1)
+                Kruskal = tk.Button(window_algoM,text="Kruskal",command=lambda:kruskal(G,window_algoM))
+                Kruskal.grid(row=1,column=2)
+                Dijikstra = tk.Button(window_algoM,text="Dijikstra",command=lambda:dijkstra(G,window_algoM))
+                Dijikstra.grid(row=1,column=3)
+                DFS = tk.Button(window_algoM, text="DFS", command=lambda: dfs(G, window_algoM))
+                DFS.grid(row=1, column=4)
+                BFS = tk.Button(window_algoM, text="BFS", command=lambda: bfs(G, window_algoM))
+                BFS.grid(row=1, column=5)
+                Warshall = tk.Button(window_algoM, text="Warshall", command=lambda: warshall(G, window_algoM))
+                Warshall.grid(row=1, column=6)
+
 
                 window_algoM.mainloop()
 
@@ -412,12 +464,18 @@ def create_dictionary():
                 window_algo = tk.Tk()
                 window_algo.geometry("400x400")
                 
-                BFS = tk.Button(window_algo, text="BFS",command=lambda: bfsD(G,window_algo))
-                BFS.grid(row=1,column=22)
-                DFS = tk.Button(window_algo,text="DFS",command=lambda:bfsD(G,window_algo))
-                DFS.grid(row=2,column=22)
-                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=lambda:dijikstraD(G,window_algo))
-                Dijikstra.grid(row=6,column=22)
+                BFS = tk.Button(window_algo, text="BFS",command=lambda: bfs(G,window_algo))
+                BFS.grid(row=1,column=1)
+                DFS = tk.Button(window_algo,text="DFS",command=lambda:dfs(G,window_algo))
+                DFS.grid(row=1,column=2)
+                Dijikstra = tk.Button(window_algo,text="Dijikstra",command=lambda:dijkstra(G,window_algo))
+                Dijikstra.grid(row=1,column=3)
+                Prim = tk.Button(window_algo,text="Prim",command=lambda:prim(G,window_algo))
+                Prim.grid(row=1,column=4)
+                Kruskal = tk.Button(window_algo,text="Kruskal",command=lambda:kruskal(G,window_algo))
+                Kruskal.grid(row=1,column=5)
+                Warshall = tk.Button(window_algo,text="Warshall",command=lambda:warshall(G,window_algo))
+                Warshall.grid(row=1,column=6)
 
                 window_algo.mainloop()
 
@@ -495,4 +553,3 @@ button_weighted.pack()
 
 window_img.mainloop()
     
-
