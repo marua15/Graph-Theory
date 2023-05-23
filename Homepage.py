@@ -6,7 +6,7 @@ from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from PIL import Image,ImageTk
 from tkinter import simpledialog
 
-
+# display a node 
 def display():
     src = simpledialog.askstring("Sommet Depart", "Entrer un Sommet : ")
     if src:
@@ -305,7 +305,6 @@ def display_graph_characteristics(G):
         # Run the tkinter window
         window.mainloop()
 
-
 # create an adjacency matrix
 def create_matrix():
     # Create an empty graph
@@ -398,8 +397,6 @@ def create_matrix():
     # Start the Tkinter event loop
     window.mainloop()
         
-
-
 # create a dictionary
 def create_dictionary():
 
@@ -524,6 +521,7 @@ def create_dictionary():
 
         # Start the tkinter event loop
         root.mainloop()
+
 
 # create the window image
 window_img = tk.Tk()
