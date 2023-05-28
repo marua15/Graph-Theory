@@ -14,9 +14,45 @@ def display():
         return src
 
 # dijkstra
-def dijkstra(G, window):
+def dijkstraD(G, window):
     # Get the source node for Dijkstra's algorithm from user input or selection
-    source_node = int(display())  # Replace with appropriate method to get the source node
+    source_node = tk.simpledialog.askstring("Dijikstra", "Enter the start node:")
+
+    # Perform Dijkstra's algorithm on the graph
+    shortest_paths = nx.single_source_dijkstra_path(G, source=source_node)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+    nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the shortest path details
+    details_label = tk.Label(window, text="Shortest Paths (Dijkstra's Algorithm):")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the details of each shortest path to the text widget
+    for node in shortest_paths:
+        path = shortest_paths[node]
+        path_length = nx.single_source_dijkstra_path_length(G, source=source_node)[node]
+        details_text.insert(tk.END, f"Node {node}: Path: {path}, Path Length: {path_length}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+def dijkstraM(G, window):
+    # Get the source node for Dijkstra's algorithm from user input or selection
+    source_node = int(display())
 
     # Perform Dijkstra's algorithm on the graph
     shortest_paths = nx.single_source_dijkstra_path(G, source=source_node)
@@ -145,7 +181,7 @@ def prim(G, window):
     details_text.config(state=tk.DISABLED)
 
 # DFS
-def dfs(G, window):
+def dfsD(G, window):
     # Perform Depth-First Search (DFS) on the graph
     visited = set()
     dfs_traversal = []
@@ -159,7 +195,51 @@ def dfs(G, window):
                 dfs(neighbor)
 
     # Get the starting node for DFS from user input or selection
-    start_node = int(display())  # Replace with appropriate method to get the starting node
+    start_node = tk.simpledialog.askstring("DFS", "Enter the start node:")
+
+    dfs(start_node)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the DFS traversal details
+    details_label = tk.Label(window, text="DFS Traversal:")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the nodes visited in the DFS traversal to the text widget
+    for node in dfs_traversal:
+        details_text.insert(tk.END, f"{node}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+def dfsM(G, window):
+    # Perform Depth-First Search (DFS) on the graph
+    visited = set()
+    dfs_traversal = []
+
+    def dfs(node):
+        visited.add(node)
+        dfs_traversal.append(node)
+
+        for neighbor in G.neighbors(node):
+            if neighbor not in visited:
+                dfs(neighbor)
+
+    # Get the starting node for DFS from user input or selection
+    start_node = int(display())
 
     dfs(start_node)
 
@@ -190,19 +270,75 @@ def dfs(G, window):
     details_text.config(state=tk.DISABLED)
 
 # BFS
-def bfs(G, window):
+def bfsD(G, window):
     # Perform Breadth-First Search (BFS) on the graph
     visited = set()
     bfs_traversal = []
 
     # Get the starting node for BFS from user input or selection
-    start_node = int(display())  # Replace with appropriate method to get the starting node
+    start_node = tk.simpledialog.askstring("BFS", "Enter the start node:")
+
+    # Check if the starting node exists in the graph
+    if start_node not in G.nodes:
+        print(f"The node {start_node} is not in the graph.")
+        return
 
     queue = [start_node]
     visited.add(start_node)
 
     while queue:
-        node = queue.pop(start_node)
+        node = queue.pop(0)
+        bfs_traversal.append(node)
+
+        for neighbor in G.neighbors(node):
+            if neighbor not in visited:
+                visited.add(neighbor)
+                queue.append(neighbor)
+
+    # Clear any previous graph
+    plt.clf()
+
+    # Draw the graph
+    pos = nx.spring_layout(G)
+    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+
+    # Update the canvas to display the new graph
+    canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
+    canvas.draw()
+    canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
+    # Display the BFS traversal details
+    details_label = tk.Label(window, text="BFS Traversal:")
+    details_label.grid(row=11, column=0, columnspan=3)
+
+    # Create a text widget to display the details
+    details_text = tk.Text(window, height=10, width=30)
+    details_text.grid(row=12, column=0, columnspan=3, padx=10, pady=10)
+
+    # Add the nodes visited in the BFS traversal to the text widget
+    for node in bfs_traversal:
+        details_text.insert(tk.END, f"{node}\n")
+
+    details_text.config(state=tk.DISABLED)
+
+def bfsM(G, window):
+    # Perform Breadth-First Search (BFS) on the graph
+    visited = set()
+    bfs_traversal = []
+
+    # Get the starting node for BFS from user input or selection
+    start_node = int(display())
+
+    # Check if the starting node exists in the graph
+    if start_node not in G.nodes:
+        print(f"The node {start_node} is not in the graph.")
+        return
+
+    queue = [start_node]
+    visited.add(start_node)
+
+    while queue:
+        node = queue.pop(0)
         bfs_traversal.append(node)
 
         for neighbor in G.neighbors(node):
@@ -241,12 +377,20 @@ def warshall(G, window):
     # Perform Floyd-Warshall algorithm on the graph
     dist_matrix = nx.floyd_warshall_numpy(G)
 
+    # Create a new graph with updated distances
+    new_G = nx.Graph()
+    for i in range(len(G.nodes)):
+        new_G.add_node(i)
+    for i in range(len(G.nodes)):
+        for j in range(len(G.nodes)):
+            new_G.add_edge(i, j, weight=dist_matrix[i][j])
+
     # Clear any previous graph
     plt.clf()
 
-    # Draw the graph
-    pos = nx.spring_layout(G)
-    nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
+    # Draw the new graph
+    pos = nx.spring_layout(new_G)
+    nx.draw_networkx(new_G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
 
     # Update the canvas to display the new graph
     canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
@@ -267,6 +411,9 @@ def warshall(G, window):
             details_text.insert(tk.END, f"From Node {i} to Node {j}: {dist_matrix[i][j]}\n")
 
     details_text.config(state=tk.DISABLED)
+
+    # Update the tkinter window to display the new graph
+    window.update()
 
 # display the characteristics of the graph
 def display_graph_characteristics(G):
@@ -350,19 +497,32 @@ def create_matrix():
         def get_algorithmsM(): 
                 window_algoM = tk.Tk()
                 window_algoM.geometry()
-                Prims = tk.Button(window_algoM,text="Prims",width= 10,command=lambda:prim(G,window_algoM))
-                Prims.grid(row=1,column=0)
-                Kruskal = tk.Button(window_algoM,text="Kruskal", width=10,command=lambda:kruskal(G,window_algoM))
-                Kruskal.grid(row=2,column=0)
-                Dijikstra = tk.Button(window_algoM,text="Dijikstra", width=10,command=lambda:dijkstra(G,window_algoM))
-                Dijikstra.grid(row=3,column=0)
-                DFS = tk.Button(window_algoM, text="DFS", width=10, command=lambda: dfs(G, window_algoM))
-                DFS.grid(row=4, column=0)
-                BFS = tk.Button(window_algoM, text="BFS", width=10, command=lambda: bfs(G, window_algoM))
-                BFS.grid(row=5, column=0)
-                Warshall = tk.Button(window_algoM, text="Warshall", width=10, command=lambda: warshall(G, window_algoM))
-                Warshall.grid(row=6, column=0)
+               
+                frame = tk.Frame(window_algoM)
+                frame.grid(row=0, column=0, padx=10, pady=10)
 
+                Prims = tk.Button(frame, text="Prims", command=lambda: prim(G, window_algoM))
+                Prims.grid(row=0, column=0, padx=10, pady=10)
+
+                Kruskal = tk.Button(frame, text="Kruskal", command=lambda: kruskal(G, window_algoM))
+                Kruskal.grid(row=0, column=1, padx=10, pady=10)
+
+                Dijikstra = tk.Button(frame, text="Dijikstra", command=lambda: dijkstraM(G, window_algoM))
+                Dijikstra.grid(row=0, column=2, padx=10, pady=10)
+
+                DFS = tk.Button(frame, text="DFS", command=lambda: dfsM(G, window_algoM))
+                DFS.grid(row=0, column=3, padx=10, pady=10)
+
+                BFS = tk.Button(frame, text="BFS", command=lambda: bfsM(G, window_algoM))
+                BFS.grid(row=0, column=4, padx=10, pady=10)
+
+                Warshall = tk.Button(frame, text="Warshall", command=lambda: warshall(G, window_algoM))
+                Warshall.grid(row=0, column=5, padx=10, pady=10)
+
+                # Configure row and column weights for the frame to center it in the window
+                frame.grid_rowconfigure(0, weight=1)
+                for column in range(6):
+                    frame.grid_columnconfigure(column, weight=1)
 
                 window_algoM.mainloop()
 
@@ -385,14 +545,12 @@ def create_matrix():
     button.grid(row=4,column=1)
 
     directed_button = tk.Button(window, text="Directed", command=lambda: setattr(directed_button, "clicked", True))
-    directed_button.grid(row=4, column=3, padx=10)
+    directed_button.grid(row=4, column=2, padx=10)
     directed_button.clicked = False
 
     undirected_button = tk.Button(window, text="Undirected", command=lambda: setattr(undirected_button, "clicked", True))
-    undirected_button.grid(row=4, column=4, padx=10)
+    undirected_button.grid(row=4, column=3, padx=10)
     undirected_button.clicked = False
-
-    
 
     # Start the Tkinter event loop
     window.mainloop()
@@ -455,30 +613,43 @@ def create_dictionary():
             
             # create button to get the characteristics of the graph
             button_characteristics = tk.Button(root, text="Get Characteristics", command=lambda: display_graph_characteristics(G))
-            button_characteristics.grid(row=5, column=0)
+            button_characteristics.grid(row=11, column=0,columnspan=3, pady=10)
 
             def get_algorithms(): 
                 window_algo = tk.Tk()
-                window_algo.geometry("400x400")
+                window_algo.geometry()
                 
-                BFS = tk.Button(window_algo, text="BFS", width=10,command=lambda: bfs(G,window_algo))
-                BFS.grid(row=1,column=0)
-                DFS = tk.Button(window_algo,text="DFS",width=10,command=lambda:dfs(G,window_algo))
-                DFS.grid(row=2,column=0)
-                Dijikstra = tk.Button(window_algo,text="Dijikstra",width=10,command=lambda:dijkstra(G,window_algo))
-                Dijikstra.grid(row=3,column=0)
-                Prim = tk.Button(window_algo,text="Prim",width=10,command=lambda:prim(G,window_algo))
-                Prim.grid(row=4,column=0)
-                Kruskal = tk.Button(window_algo,text="Kruskal",width=10,command=lambda:kruskal(G,window_algo))
-                Kruskal.grid(row=5,column=0)
-                Warshall = tk.Button(window_algo,text="Warshall",width=10,command=lambda:warshall(G,window_algo))
-                Warshall.grid(row=6,column=0)
+                frame = tk.Frame(window_algo)
+                frame.grid(row=0, column=0, padx=10, pady=10)
+
+                Prims = tk.Button(frame, text="Prims", command=lambda: prim(G, window_algo))
+                Prims.grid(row=0, column=0, padx=10, pady=10)
+
+                Kruskal = tk.Button(frame, text="Kruskal", command=lambda: kruskal(G, window_algo))
+                Kruskal.grid(row=0, column=1, padx=10, pady=10)
+
+                Dijikstra = tk.Button(frame, text="Dijikstra", command=lambda: dijkstraD(G, window_algo))
+                Dijikstra.grid(row=0, column=2, padx=10, pady=10)
+
+                DFS = tk.Button(frame, text="DFS", command=lambda: dfsD(G, window_algo))
+                DFS.grid(row=0, column=3, padx=10, pady=10)
+
+                BFS = tk.Button(frame, text="BFS", command=lambda: bfsD(G, window_algo))
+                BFS.grid(row=0, column=4, padx=10, pady=10)
+
+                Warshall = tk.Button(frame, text="Warshall", command=lambda: warshall(G, window_algo))
+                Warshall.grid(row=0, column=5, padx=10, pady=10)
+
+                # Configure row and column weights for the frame to center it in the window
+                frame.grid_rowconfigure(0, weight=1)
+                for column in range(6):
+                    frame.grid_columnconfigure(column, weight=1)
 
                 window_algo.mainloop()
 
             # create button to get the algorithms graph
             button_algo = tk.Button(root, text="Get Algorithms",command= get_algorithms)
-            button_algo.grid(row=6, column=0)
+            button_algo.grid(row=12, column=0,columnspan=3, pady=10)
 
 
         # Create a tkinter window
@@ -533,8 +704,7 @@ label_txt.pack()
 image = Image.open("img\ReseauxGraphes.jpg")
 
 #Resize the Image using resize method
-image.resize((100,100), Image.Resampling.LANCZOS)
-
+image = image.resize((800, 600), Image.LANCZOS)
 # Convert the image to a PhotoImage object
 photo = ImageTk.PhotoImage(image)
 
