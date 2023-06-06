@@ -704,7 +704,7 @@ label_txt.pack()
 image = Image.open("img\ReseauxGraphes.jpg")
 
 #Resize the Image using resize method
-image = image.resize((800, 600), Image.LANCZOS)
+image = image.resize((800, 600), Image.Resampling.LANCZOS)
 # Convert the image to a PhotoImage object
 photo = ImageTk.PhotoImage(image)
 
