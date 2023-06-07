@@ -168,7 +168,7 @@ def prim(G, window):
     # Clear any previous graph
     plt.clf()
 
-     # Draw the minimum spanning tree graph
+    # Draw the minimum spanning tree graph
     pos = nx.spring_layout(G)
     nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
     nx.draw_networkx_edges(mst_graph, pos, width=2, edge_color='red')
@@ -287,7 +287,11 @@ def dfsM(G, window):
 def bfsD(G, window):
     # Perform Breadth-First Search (BFS) on the graph
     visited = set()
+    #A set is an unordered collection of unique elements. 
+    # In this case, the visited set is used to keep track of unique items that have been visited 
+
     bfs_traversal = []
+    # we create an empty list
 
     # Get the starting node for BFS from user input or selection
     start_node = tk.simpledialog.askstring("BFS", "Enter the start node:")
@@ -300,14 +304,18 @@ def bfsD(G, window):
     queue = [start_node]
     visited.add(start_node)
 
+    # condition : queue is empty or not
     while queue:
         node = queue.pop(0)
+        # remove the first element from the queue
+
         bfs_traversal.append(node)
 
         for neighbor in G.neighbors(node):
             if neighbor not in visited:
-                visited.add(neighbor)
+                visited.add(neighbor)  
                 queue.append(neighbor)
+                #Add the neighbor element to the end of the queue.
 
     # Clear any previous graph
     plt.clf()
@@ -338,7 +346,11 @@ def bfsD(G, window):
 def bfsM(G, window):
     # Perform Breadth-First Search (BFS) on the graph
     visited = set()
+    #A set is an unordered collection of unique elements. 
+    # In this case, the visited set is used to keep track of unique items that have been visited
+
     bfs_traversal = []
+    # we create an empty list
 
     # Get the starting node for BFS from user input or selection
     start_node = int(display())
@@ -351,14 +363,18 @@ def bfsM(G, window):
     queue = [start_node]
     visited.add(start_node)
 
+    # condition : queue is empty or not
     while queue:
         node = queue.pop(0)
+        # remove the first element from the queue
+
         bfs_traversal.append(node)
 
         for neighbor in G.neighbors(node):
             if neighbor not in visited:
                 visited.add(neighbor)
                 queue.append(neighbor)
+                #Add the neighbor element to the end of the queue.
 
     # Clear any previous graph
     plt.clf()

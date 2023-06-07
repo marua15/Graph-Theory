@@ -10,6 +10,8 @@ def prim_mst(graph):
     # Initialize a set to keep track of visited nodes
     visited = {start_node}
 
+    # Condition that checks whether the length of a list called "visited" 
+    # is less than the length of another list called "graph.nodes()". 
     while len(visited) < len(graph.nodes()):
         # Find the minimum weight edge from visited nodes to unvisited nodes
         min_edge = None
