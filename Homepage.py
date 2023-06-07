@@ -24,15 +24,22 @@ def dijkstraD(G, window):
     # Clear any previous graph
     plt.clf()
 
-    # Draw the graph
+     # Draw the graph
     pos = nx.spring_layout(G)
     nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
+
+    # Draw the shortest path on the graph
+    for node in shortest_paths:
+        path = shortest_paths[node]
+        edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
+        nx.draw_networkx_edges(G, pos, edgelist=edges, edge_color='red', width=2)
 
     # Update the canvas to display the new graph
     canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
     canvas.draw()
     canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
 
     # Display the shortest path details
     details_label = tk.Label(window, text="Shortest Paths (Dijkstra's Algorithm):")
@@ -60,15 +67,22 @@ def dijkstraM(G, window):
     # Clear any previous graph
     plt.clf()
 
-    # Draw the graph
+     # Draw the graph
     pos = nx.spring_layout(G)
     nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
     nx.draw_networkx_edge_labels(G, pos, edge_labels=nx.get_edge_attributes(G, 'weight'))
+
+    # Draw the shortest path on the graph
+    for node in shortest_paths:
+        path = shortest_paths[node]
+        edges = [(path[i], path[i+1]) for i in range(len(path)-1)]
+        nx.draw_networkx_edges(G, pos, edgelist=edges, edge_color='red', width=2)
 
     # Update the canvas to display the new graph
     canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
     canvas.draw()
     canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
+
 
     # Display the shortest path details
     details_label = tk.Label(window, text="Shortest Paths (Dijkstra's Algorithm):")
@@ -154,7 +168,7 @@ def prim(G, window):
     # Clear any previous graph
     plt.clf()
 
-    # Draw the minimum spanning tree graph
+     # Draw the minimum spanning tree graph
     pos = nx.spring_layout(G)
     nx.draw_networkx(G, pos, with_labels=True, node_color='lightblue', node_size=500, font_size=10, width=2, edge_color='gray')
     nx.draw_networkx_edges(mst_graph, pos, width=2, edge_color='red')
@@ -163,7 +177,7 @@ def prim(G, window):
     canvas = FigureCanvasTkAgg(plt.gcf(), master=window)
     canvas.draw()
     canvas.get_tk_widget().grid(row=10, column=0, columnspan=3, pady=10)
-
+    
     # Display the minimum spanning tree details
     details_label = tk.Label(window, text="Minimum Spanning Tree (Prim's Algorithm):")
     details_label.grid(row=11, column=0, columnspan=3)
